@@ -4,12 +4,8 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-# how many subjects - plots
-# how many including different working sleep scores
-# any subjects with wide range of runs that will have enough data 
-# how many minutes ana's data
 
-### PLOTTING # OF SLEEPY SUBJECTS
+### PLOTTING # OF SLEEPY/AWAKE SUBJECTS
 
 # Load in data
 inet_data = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/arousal proj/inetworks-sleep-data.csv")
@@ -39,10 +35,9 @@ inet_total_time <- inet_data %>%
 
 # Filter out subjects who do not have FDCalc and therefore have no time.
 inet_usable_subjects <- filter(inet_total_time, total_time > 0)
-life_usable_subjects <- filter(life_total_time, total_time > 0)
 
 # Define function to calculate number of sleepy subjects with total time > 40 minutes, depending on what sleepy sleep score is.
-count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 40) { # Takes in INET or LS data sets.
+count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20) { # Takes in INET or LS data sets.
   data_filtered <- data %>% filter(sleep.score > sleepy_sleep_score_min)
   
   total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
@@ -59,7 +54,7 @@ count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 40
 }
 
 # Define function to calculate number of awake subjects with total time > 40 minutes, depending on what awake sleep score is.
-count_awake_subjects <- function(data, awake_sleep_score_max, max_minutes = 40) { # Takes in INET or LS data sets.
+count_awake_subjects <- function(data, awake_sleep_score_max, max_minutes = 20) { # Takes in INET or LS data sets.
   data_filtered <- data %>% filter(sleep.score <= awake_sleep_score_max)
   
   total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
@@ -112,4 +107,18 @@ p2 <- ggplot(inet_plot_awake_data, aes(x = sleep_score, y = subject_count)) +
 
 # Arrange the plots in a 1x2 grid
 grid.arrange(p1, p2, nrow = 1, ncol = 2)
+
+
+# Counting number of subjects with scores >= 5 and <= 3
+subject_count_sleepy_awake <- inet_data %>%
+  group_by(subject) %>%
+  summarise(
+    has_sleepy = any(sleep.score >= 5, na.rm = TRUE),
+    has_awake  = any(sleep.score <= 3, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(has_sleepy & has_awake)
+
+# Count how many such subjects
+n_both <- nrow(subject_count_sleepy_awake)
 
