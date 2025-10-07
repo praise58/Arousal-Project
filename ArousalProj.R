@@ -1,4 +1,3 @@
-library(readxl)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -14,52 +13,70 @@ library(gridExtra)
 
 ###################### TASK 1: Data frame for FD Nums ###########################
 # grab a list of all excel files
-file_list <- list.files(path = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti", pattern = "_desc-framenums_fFD\\.txt$", recursive = TRUE, full.names = TRUE)
+file_list <- list.files(path = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti/derivatives/preproc_fmriprep-24.1.1", pattern = "_desc-framenums_fFD\\.txt$", recursive = TRUE, full.names = TRUE)
 
-# initialize blank df
-# create an empty data frame
-ffd_files <- data.frame(
-  subject = character(),
-  session = character(),
-  run     = character(),
-  task    = character(),
-  file    = character(),
-  frames  = character(),
-  stringsAsFactors = FALSE
-)
-
-# iterate through files
-for (i in seq_along(ffd_files)) {
+# ---- Function to extract metadata and FD frames ----
+extract_ffd_info <- function(fpath) {
+  fname <- basename(fpath)
+  parts <- strsplit(fname, "_")[[1]]
   
-  fname <- basename(ffd_files[i])          # just the file name
-  parts <- strsplit(fname, "_")[[1]]       # split at underscores
+  # Safely extract parts
+  subject <- sub("sub-", "", parts[grep("^sub-", parts)])
+  session <- sub("ses-", "", parts[grep("^ses-", parts)])
+  task    <- sub("task-", "", parts[grep("^task-", parts)])
   
-  # extract elements
-  subject <- sub("sub-", "", parts[1])
-  session <- sub("ses-", "", parts[2])
-  task    <- sub("task-", "", parts[3])
+  run <- if (any(grepl("^run-", parts))) {
+    sub("run-", "", parts[grep("^run-", parts)])
+  } else {
+    NA
+  }
   
-  # optional: if run number exists in name
-  run <- ifelse(any(grepl("^run-", parts)), 
-                sub("run-", "", parts[grepl("^run-", parts)]), 
-                NA)
+  # ---- Read frame numbers, remove header and invalid lines ----
+  lines <- readLines(fpath, warn = FALSE)
+  lines <- trimws(lines)
+  lines <- lines[lines != ""]                   # remove blank lines
+  lines <- lines[grepl("^[0-9eE.+-]+$", lines)] # keep only numeric-like lines
   
-  # read in frame numbers (assume text file with numbers inside)
-  frames <- paste(readLines(ffd_files[i]), collapse = ",")
+  if (length(lines) == 0) {
+    warning(paste("No numeric data found in file:", fname))
+    FD_frames <- NA
+  } else {
+    FD_frames <- paste(lines, collapse = ",")
+  }
   
-  # add to dataframe
-  ffd_df <- rbind(ffd_df, data.frame(
-    subject = subject,
-    session = session,
-    run     = run,
-    task    = task,
+  # Return one-row dataframe
+  data.frame(
+    subject = ifelse(length(subject) > 0, subject, NA),
+    session = ifelse(length(session) > 0, session, NA),
+    run     = ifelse(length(run) > 0, run, NA),
+    task    = ifelse(length(task) > 0, task, NA),
     file    = fname,
-    frames  = frames,
+    path    = fpath,
+    FD_frames = FD_frames,
     stringsAsFactors = FALSE
-  ))
+  )
 }
 
+# ---- Apply to all files ----
+ffd_files <- do.call(rbind, lapply(file_list, extract_ffd_info))
 
+# ---- Keep only rest task ----
+ffd_files <- ffd_files %>%
+  filter(task == "rest")
+
+# ---- Expand FD_frames into one row per run ----
+ffd_files <- ffd_files %>%
+  mutate(FD_frames = strsplit(FD_frames, ",")) %>%
+  unnest(FD_frames) %>%
+  mutate(
+    FD_frames = trimws(FD_frames),
+    FD = suppressWarnings(as.numeric(FD_frames))
+  ) %>%
+  filter(!is.na(FD)) %>% # drop rows that couldn't convert to numeric
+  group_by(subject, session, task) %>%
+  mutate(run = row_number()) %>%
+  ungroup() %>%
+  select(-FD_frames) # remove redundant column
 
 
 ### PLOTTING # OF SLEEPY SUBJECTS
