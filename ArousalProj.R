@@ -11,87 +11,108 @@ library(gridExtra)
 
 
 
-###################### TASK 1: Data frame for FD Nums ###########################
-# grab a list of all excel files
-file_list <- list.files(path = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti/derivatives/preproc_fmriprep-24.1.1", pattern = "_desc-framenums_fFD\\.txt$", recursive = TRUE, full.names = TRUE)
-
-# ---- Function to extract metadata and FD frames ----
-extract_ffd_info <- function(fpath) {
-  fname <- basename(fpath)
-  parts <- strsplit(fname, "_")[[1]]
+###################### TASK 1: Make the data frame for FD Nums ###########################
+# grab a list of all subjects
+file_list <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/file_list.csv")
+sleep_scores <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/inetworks-sleep-data.csv")
+# 
+# # ---- Function to extract metadata and FD frames ----
+# extract_ffd_info <- function(fpath) {
+#   fname <- basename(fpath)
+#   parts <- strsplit(fname, "_")[[1]]
+#   
+#   # Safely extract parts
+#   subject <- sub("sub-", "", parts[grep("^sub-", parts)])
+#   session <- sub("ses-", "", parts[grep("^ses-", parts)])
+#   task    <- sub("task-", "", parts[grep("^task-", parts)])
+#   
+#   run <- if (any(grepl("^run-", parts))) {
+#     sub("run-", "", parts[grep("^run-", parts)])
+#   } else {
+#     NA
+#   }
+#   
+#   # ---- Read frame numbers, remove header and invalid lines ----
+#   lines <- readLines(fpath, warn = FALSE)
+#   lines <- trimws(lines)
+#   lines <- lines[lines != ""]                   # remove blank lines
+#   lines <- lines[grepl("^[0-9eE.+-]+$", lines)] # keep only numeric-like lines
+#   
+#   if (length(lines) == 0) {
+#     warning(paste("No numeric data found in file:", fname))
+#     FD_frames <- NA
+#   } else {
+#     FD_frames <- paste(lines, collapse = ",")
+#   }
   
-  # Safely extract parts
-  subject <- sub("sub-", "", parts[grep("^sub-", parts)])
-  session <- sub("ses-", "", parts[grep("^ses-", parts)])
-  task    <- sub("task-", "", parts[grep("^task-", parts)])
-  
-  run <- if (any(grepl("^run-", parts))) {
-    sub("run-", "", parts[grep("^run-", parts)])
-  } else {
-    NA
-  }
-  
-  # ---- Read frame numbers, remove header and invalid lines ----
-  lines <- readLines(fpath, warn = FALSE)
-  lines <- trimws(lines)
-  lines <- lines[lines != ""]                   # remove blank lines
-  lines <- lines[grepl("^[0-9eE.+-]+$", lines)] # keep only numeric-like lines
-  
-  if (length(lines) == 0) {
-    warning(paste("No numeric data found in file:", fname))
-    FD_frames <- NA
-  } else {
-    FD_frames <- paste(lines, collapse = ",")
-  }
-  
-  # Return one-row dataframe
-  data.frame(
-    subject = ifelse(length(subject) > 0, subject, NA),
-    session = ifelse(length(session) > 0, session, NA),
-    run     = ifelse(length(run) > 0, run, NA),
-    task    = ifelse(length(task) > 0, task, NA),
-    file    = fname,
-    path    = fpath,
-    FD_frames = FD_frames,
-    stringsAsFactors = FALSE
-  )
-}
+#   # Return one-row dataframe
+#   data.frame(
+#     subject = ifelse(length(subject) > 0, subject, NA),
+#     session = ifelse(length(session) > 0, session, NA),
+#     run     = ifelse(length(run) > 0, run, NA),
+#     task    = ifelse(length(task) > 0, task, NA),
+#     file    = fname,
+#     path    = fpath,
+#     FD_frames = FD_frames,
+#     stringsAsFactors = FALSE
+#   )
+# }
+# 
+# # ---- Apply to all files ----
+# ffd_files <- do.call(rbind, lapply(file_list, extract_ffd_info))
+# 
+# # ---- Keep only rest task ----
+# ffd_files <- ffd_files %>%
+#   filter(task == "rest")
+# 
+# # ---- Expand FD_frames into one row per run ----
+# ffd_files <- ffd_files %>%
+#   mutate(FD_frames = strsplit(FD_frames, ",")) %>%
+#   unnest(FD_frames) %>%
+#   mutate(
+#     FD_frames = trimws(FD_frames),
+#     FD = suppressWarnings(as.numeric(FD_frames))
+#   ) %>%
+#   filter(!is.na(FD)) %>% # drop rows that couldn't convert to numeric
+#   group_by(subject, session, task) %>%
+#   mutate(run = row_number()) %>%
+#   ungroup() %>%
+#   select(-FD_frames) # remove redundant column
 
-# ---- Apply to all files ----
-ffd_files <- do.call(rbind, lapply(file_list, extract_ffd_info))
-
-# ---- Keep only rest task ----
-ffd_files <- ffd_files %>%
-  filter(task == "rest")
-
-# ---- Expand FD_frames into one row per run ----
-ffd_files <- ffd_files %>%
-  mutate(FD_frames = strsplit(FD_frames, ",")) %>%
-  unnest(FD_frames) %>%
-  mutate(
-    FD_frames = trimws(FD_frames),
-    FD = suppressWarnings(as.numeric(FD_frames))
-  ) %>%
-  filter(!is.na(FD)) %>% # drop rows that couldn't convert to numeric
-  group_by(subject, session, task) %>%
-  mutate(run = row_number()) %>%
-  ungroup() %>%
-  select(-FD_frames) # remove redundant column
-
+# 
+# # Merge sleep.score from sleep_scores into file_list by subject, session, task, run
+# inet_data <- file_list %>%
+#   left_join(
+#     sleep_scores %>%
+#       select(subject, session, task, run, sleep.score),
+#     by = c("subject", "session", "task", "run")
+#   )
 
 ### PLOTTING # OF SLEEPY SUBJECTS
 
 # Load in data
-inet_data_duplicate = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/inetworks-sleep-data.csv")
+# inet_data_duplicate = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/inetworks-sleep-data.csv")
+# inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/inetworks-sleep-data.csv")  # alt path
+
 inet_data <- unique(inet_data)
-pm_data = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/PM-sleep-data.csv")
+# sleep_scores <- unique(sleep_scores) #workspace var
+
+# pm_data = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/PM-sleep-data.csv")
+pm_data = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/PM-sleep-data.csv") # alt path
 # life_data = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/arousal proj/lifespan-sleep-data.csv")
 
-inet_data$FD.hold <- as.numeric(inet_data$FD.hold)
+inet_data$FD <- as.numeric(inet_data$FD)
+# sleep_scores$FD.hold <- as.numeric(sleep_scores$FD.hold)
 pm_data$FD.hold <- as.numeric(pm_data$FD.hold)
 # life_data$FD.hold <- as.numeric(life_data$FD.hold)
 
-
+# Get subjects without sleep_score.
+inet_data_Na_sleep_subs <- inet_data %>%
+  group_by(subject) %>%
+  summarise(
+    n_Na = sum(is.na(sleep.score))
+  ) %>%
+  ungroup()
 
 # # Filter out eyes_closed or not_rs
 # inet_data_filtered <- inet_data[!(inet_data$category %in% c("eyes_closed", "not_rs")), ]
@@ -106,14 +127,16 @@ INET_FRAMES = 450
 INET_MIN_PER_RUN = (INET_TR * INET_FRAMES) / 60 # Find the real time by frames x TR.
 # LS_MIN_PER_RUN = (LS_TR * LS_FRAMES) / 60
 
-inet_data$time = inet_data$FD.hold * INET_MIN_PER_RUN # Multiply total minutes by proportion of good frames.
+# inet_data$time = inet_data$FD.hold * INET_MIN_PER_RUN # Multiply total minutes by proportion of good frames.
+inet_data$time = (inet_data$FD * INET_TR) / 60
 # life_data$time = life_data$FD.hold * LS_MIN_PER_RUN
 
 MIN_MINUTES = 20
 
-inet_total_time <- inet_data %>%
-  group_by(subject) %>%
-  summarise(total_time = sum(get("time"), na.rm = TRUE)) 
+#Find the total time each subject has without grouping by sleepiness.
+# inet_total_time <- inet_data %>%
+#   group_by(subject) %>%
+#   summarise(total_time = sum(get("time"), na.rm = TRUE)) 
 # 
 # life_total_time <- life_data %>%
 #   group_by(subject) %>%
@@ -196,10 +219,10 @@ sleep_scores_pm <- 1:5
 
 inet_counts_sleepy <- sapply(sleep_scores, function(score) count_sleepy_subjects(inet_data, score)) 
 # life_counts_sleepy <- sapply(sleep_scores, function(score) count_sleepy_subjects(life_data, score))
-
 inet_counts_awake <- sapply(sleep_scores, function(score) count_awake_subjects(inet_data, score)) 
 # life_counts_awake <- sapply(sleep_scores, function(score) count_awake_subjects(life_data, score))
-
+pm_sessions_sleepy <- pm_data[pm_data$sleep.score >= 4,]
+pm_sessions_awake <- pm_data[pm_data$sleep.score <= 2,]
 
 inet_plot_sleepy_data <- data.frame(sleep_score = sleep_scores, subject_count = inet_counts_sleepy) # Plots number of sleepy subjects with total time > 40 minutes.
 # life_plot_sleepy_data <- data.frame(sleep_score = sleep_scores, subject_count = life_counts_sleepy)
