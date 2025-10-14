@@ -14,7 +14,7 @@ library(gridExtra)
 ###################### TASK 1: Make the data frame for FD Nums ###########################
 # grab a list of all subjects
 file_list <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/file_list.csv")
-sleep_scores <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/inetworks-sleep-data.csv")
+sleep_scores <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/iNETs-sleep-data_v2.csv")
 # 
 # # ---- Function to extract metadata and FD frames ----
 # extract_ffd_info <- function(fpath) {
@@ -79,22 +79,23 @@ sleep_scores <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Proj
 #   ungroup() %>%
 #   select(-FD_frames) # remove redundant column
 
-# 
-# # Merge sleep.score from sleep_scores into file_list by subject, session, task, run
-# inet_data <- file_list %>%
-#   left_join(
-#     sleep_scores %>%
-#       select(subject, session, task, run, sleep.score),
-#     by = c("subject", "session", "task", "run")
-#   )
+
+# Merge sleep.score from sleep_scores into file_list by subject, session, task, run
+inet_data <- file_list %>%
+  left_join(
+    sleep_scores %>%
+      select(subject, session, task, run, sleep.score),
+    by = c("subject", "session", "task", "run")
+  )
+
 
 ### PLOTTING # OF SLEEPY SUBJECTS
 
 # Load in data
 # inet_data_duplicate = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/inetworks-sleep-data.csv")
-# inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/inetworks-sleep-data.csv")  # alt path
+inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/iNETs-sleep-data_v2.csv")  # alt path
 
-inet_data <- unique(inet_data)
+inet_data <- unique(inet_data_duplicate)
 # sleep_scores <- unique(sleep_scores) #workspace var
 
 # pm_data = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/PM-sleep-data.csv")
@@ -127,6 +128,8 @@ INET_FRAMES = 450
 INET_MIN_PER_RUN = (INET_TR * INET_FRAMES) / 60 # Find the real time by frames x TR.
 # LS_MIN_PER_RUN = (LS_TR * LS_FRAMES) / 60
 
+#Make the time column.
+
 # inet_data$time = inet_data$FD.hold * INET_MIN_PER_RUN # Multiply total minutes by proportion of good frames.
 inet_data$time = (inet_data$FD * INET_TR) / 60
 # life_data$time = life_data$FD.hold * LS_MIN_PER_RUN
@@ -141,7 +144,6 @@ MIN_MINUTES = 20
 # life_total_time <- life_data %>%
 #   group_by(subject) %>%
 #   summarise(total_time = sum(get("time"), na.rm = TRUE)) 
-
 
 
 # Filter out subjects who do not have FDCalc and therefore have no time.
@@ -163,7 +165,7 @@ inet_usable_subjects <- inet_data %>%
 
 
 # Define function to calculate number of sleepy subjects with total time > 20 minutes, depending on what sleepy sleep score is.
-count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20) { # Takes in INET or LS data sets.
+count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 30) { # Takes in INET or LS data sets.
   data_filtered <- data %>% filter(sleep.score >= sleepy_sleep_score_min)
 
   total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
@@ -180,11 +182,11 @@ count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20
 }
 
 count_awake_subjects <- function(data, awake_sleep_score_max, max_minutes = 20) { # Takes in INET or LS data sets.
-  data_filtered <- data %>% filter(sleep.score < awake_sleep_score_max)
+  data_filtered <- data %>% filter(sleep.score <= awake_sleep_score_max)
   
-  total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
+  total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "awake"
     group_by(subject) %>%
-    summarise(total_time = sum(get("time"), na.rm = TRUE)) # Calculates total time for the "sleepy" runs of one subject
+    summarise(total_time = sum(get("time"), na.rm = TRUE)) # Calculates total time for the "awake" runs of one subject
   
   # Count subjects with total time > min_minutes
   count <- total_time_per_subject %>%
@@ -278,7 +280,7 @@ grid.arrange(p2, p4, nrow = 1, ncol = 2)
 
 
 
-count_both_subjects <- function(data, sleepy_min = 6, awake_max = 3, min_minutes = 40) {
+count_both_subjects <- function(data, sleepy_min = 6, awake_max = 2, min_minutes = 20) {
   # Sleepy totals
   sleepy_totals <- data %>%
     filter(sleep.score >= sleepy_min) %>%
@@ -288,7 +290,7 @@ count_both_subjects <- function(data, sleepy_min = 6, awake_max = 3, min_minutes
   
   # Awake totals
   awake_totals <- data %>%
-    filter(sleep.score < awake_max) %>%
+    filter(sleep.score <= awake_max) %>%
     group_by(subject) %>%
     summarise(awake_time = sum(time, na.rm = TRUE), .groups = "drop") %>%
     filter(awake_time >= min_minutes)
@@ -302,10 +304,13 @@ count_both_subjects <- function(data, sleepy_min = 6, awake_max = 3, min_minutes
     sleepy_awake_times = both   # dataframe with subject, sleepy_time, awake_time
   ))
 }
+#create data farme with sleepy runs: list subject, session, run, age, gender
+ # match the sleepy runs number with awake runs: match age and gender with sleepy runs df
+#save matched inets in csv
 
-# count_both_subjects(life_data)
+
+# count_both_subjects
 results <- count_both_subjects(inet_data)
 minutes_for_sleepy_awake <- results$sleepy_awake_times
-results <- count_both_subjects(pm_data, sleepy_min = 5, awake_max = 2)
+results <- count_both_subjects(pm_data, sleepy_min = 5, awake_max = 1)
 minutes_for_sleepy_awake <- rbind(minutes_for_sleepy_awake, results$sleepy_awake_times)
-
