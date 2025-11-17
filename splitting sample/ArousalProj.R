@@ -3,14 +3,6 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-# how many subjects - plots
-# how many including different working sleep scores
-# any subjects with wide range of runs that will have enough data 
-# how many minutes ana's data
-# match demographic data
-
-
-
 ###################### TASK 1: Make the data frame for FD Nums ###########################
 # grab a list of all subjects
 file_list <- read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/file_list.csv")
@@ -93,7 +85,8 @@ inet_data <- file_list %>%
 
 # Load in data
 # inet_data_duplicate = read.csv("C:/Users/tempu/Downloads/research/labs/gratton/Arousal Project Gratton Lab/inetworks-sleep-data.csv")
-inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/iNETs-sleep-data_v2.csv")  # alt path
+# inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/iNETs-sleep-data_v2.csv")  # alt path
+inet_data_duplicate = read.csv("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/iNET_sleep_scores_and_times_v2.csv")
 
 inet_data <- unique(inet_data_duplicate)
 # sleep_scores <- unique(sleep_scores) #workspace var
@@ -107,13 +100,16 @@ inet_data$FD <- as.numeric(inet_data$FD)
 pm_data$FD.hold <- as.numeric(pm_data$FD.hold)
 # life_data$FD.hold <- as.numeric(life_data$FD.hold)
 
-# Get subjects without sleep_score.
-inet_data_Na_sleep_subs <- inet_data %>%
-  group_by(subject) %>%
-  summarise(
-    n_Na = sum(is.na(sleep.score))
-  ) %>%
-  ungroup()
+#Filter unusable subs.
+inet_data <- filter(inet_data, subject != "INET001", subject != "INET002", subject != "INET003", subject != "INET005", subject != "INET006", subject != "INET010", subject != "INET026", subject != "INET042", subject != "INET080" )
+
+# # Get subjects without sleep_score.
+# inet_data_Na_sleep_subs <- inet_data %>%
+#   group_by(subject) %>%
+#   summarise(
+#     n_Na = sum(is.na(sleep.score))
+#   ) %>%
+#   ungroup()
 
 # # Filter out eyes_closed or not_rs
 # inet_data_filtered <- inet_data[!(inet_data$category %in% c("eyes_closed", "not_rs")), ]
@@ -137,9 +133,9 @@ inet_data$time = (inet_data$FD * INET_TR) / 60
 MIN_MINUTES = 20
 
 #Find the total time each subject has without grouping by sleepiness.
-# inet_total_time <- inet_data %>%
-#   group_by(subject) %>%
-#   summarise(total_time = sum(get("time"), na.rm = TRUE)) 
+inet_total_time <- inet_data %>%
+  group_by(subject) %>%
+  summarise(total_time = sum(get("time"), na.rm = TRUE))
 # 
 # life_total_time <- life_data %>%
 #   group_by(subject) %>%
@@ -151,10 +147,10 @@ MIN_MINUTES = 20
 # life_usable_subjects <- filter(life_total_time, total_time > 0)
 
 # Same thing but doesn't group by subject and keeps dataframe structure.
-inet_usable_subjects <- inet_data %>%
-  group_by(subject) %>%
-  filter(sum(time, na.rm = TRUE) >= 20) %>%
-  ungroup()
+# inet_usable_subjects <- inet_data %>%
+#   group_by(subject) %>%
+#   filter(sum(time, na.rm = TRUE) >= 20) %>%
+#   ungroup()
 
 # life_usable_subjects <- life_data %>%
 #   group_by(subject) %>%
@@ -165,7 +161,7 @@ inet_usable_subjects <- inet_data %>%
 
 
 # Define function to calculate number of sleepy subjects with total time > 20 minutes, depending on what sleepy sleep score is.
-count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 30) { # Takes in INET or LS data sets.
+count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20) { # Takes in INET or LS data sets.
   data_filtered <- data %>% filter(sleep.score >= sleepy_sleep_score_min)
 
   total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
@@ -181,29 +177,12 @@ count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 30
   return(count)
 }
 
-count_awake_subjects <- function(data, awake_sleep_score_max, max_minutes = 20) { # Takes in INET or LS data sets.
+count_awake_subjects <- function(data, awake_sleep_score_max, min_minutes = 20) { # Takes in INET or LS data sets.
   data_filtered <- data %>% filter(sleep.score <= awake_sleep_score_max)
   
   total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "awake"
     group_by(subject) %>%
     summarise(total_time = sum(get("time"), na.rm = TRUE)) # Calculates total time for the "awake" runs of one subject
-  
-  # Count subjects with total time > min_minutes
-  count <- total_time_per_subject %>%
-    filter(total_time > max_minutes) %>%
-    summarise(n = n_distinct(subject)) %>%
-    pull(n)
-  
-  return(count)
-}
-
-# Count sleepy minutes
-count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20) { # Takes in INET or LS data sets.
-  data_filtered <- data %>% filter(sleep.score >= sleepy_sleep_score_min)
-  
-  total_time_per_subject <- data_filtered %>% # Calculates only for people whose sleep scores are considered "sleepy"
-    group_by(subject) %>%
-    summarise(total_time = sum(get("time"), na.rm = TRUE)) # Calculates total time for the "sleepy" runs of one subject
   
   # Count subjects with total time > min_minutes
   count <- total_time_per_subject %>%
@@ -219,9 +198,10 @@ count_sleepy_subjects <- function(data, sleepy_sleep_score_min, min_minutes = 20
 sleep_scores <- 1:7
 sleep_scores_pm <- 1:5
 
-inet_counts_sleepy <- sapply(sleep_scores, function(score) count_sleepy_subjects(inet_data, score)) 
+inet_counts_sleepy <- sapply(sleep_scores, function(score) count_sleepy_subjects(inet_data, score, min_minutes = 5)) 
 # life_counts_sleepy <- sapply(sleep_scores, function(score) count_sleepy_subjects(life_data, score))
-inet_counts_awake <- sapply(sleep_scores, function(score) count_awake_subjects(inet_data, score)) 
+inet_counts_awake <- sapply(sleep_scores, function(score) count_awake_subjects(inet_data, score, min_minutes = 5
+                                                                               )) 
 # life_counts_awake <- sapply(sleep_scores, function(score) count_awake_subjects(life_data, score))
 pm_sessions_sleepy <- pm_data[pm_data$sleep.score >= 4,]
 pm_sessions_awake <- pm_data[pm_data$sleep.score <= 2,]
@@ -234,7 +214,7 @@ inet_plot_awake_data <- data.frame(sleep_score = sleep_scores, subject_count = i
 
 
 
-
+#----------PLOTTING-----------#
 
 # Plot for number of INET sleepy subjects with total time > 40 minutes
 p1 <- ggplot(inet_plot_sleepy_data, aes(x = sleep_score, y = subject_count)) +
@@ -278,7 +258,7 @@ grid.arrange(p2, p4, nrow = 1, ncol = 2)
 
 
 
-
+# Count subjects with both sleepy and awake runs.
 
 count_both_subjects <- function(data, sleepy_min = 6, awake_max = 2, min_minutes = 20) {
   # Sleepy totals
@@ -314,3 +294,56 @@ results <- count_both_subjects(inet_data)
 minutes_for_sleepy_awake <- results$sleepy_awake_times
 results <- count_both_subjects(pm_data, sleepy_min = 5, awake_max = 1)
 minutes_for_sleepy_awake <- rbind(minutes_for_sleepy_awake, results$sleepy_awake_times)
+
+
+#--------GET RUNS OF SLEEPY/AWAKE SUBS----------------#
+# SLEEPY
+get_sleepy_details <- function(data, sleepy_score_min, min_minutes = 5) {
+  # Filter by sleepy threshold
+  data_filtered <- data %>%
+    filter(sleep.score >= sleepy_score_min)
+  
+  # Compute total time per subject
+  total_time_per_subject <- data_filtered %>%
+    group_by(subject) %>%
+    summarise(total_time = sum(time, na.rm = TRUE)) %>%
+    filter(total_time > min_minutes)
+  
+  # Keep only subjects who pass the time threshold
+  sleepy_subjects <- total_time_per_subject$subject
+  
+  # Return all runs/sessions for those subjects
+  runs_sessions <- data_filtered %>%
+    filter(subject %in% sleepy_subjects) %>%
+    select(subject, session, run, time, sleep.score)
+  
+  return(runs_sessions)
+}
+
+# AWAKE
+get_awake_details <- function(data, awake_score_max, min_minutes = 5) {
+  # Filter by sleepy threshold
+  data_filtered <- data %>%
+    filter(sleep.score <= awake_score_max)
+  
+  # Compute total time per subject
+  total_time_per_subject <- data_filtered %>%
+    group_by(subject) %>%
+    summarise(total_time = sum(time, na.rm = TRUE)) %>%
+    filter(total_time > min_minutes)
+  
+  # Keep only subjects who pass the time threshold
+  sleepy_subjects <- total_time_per_subject$subject
+  
+  # Return all runs/sessions for those subjects
+  runs_sessions <- data_filtered %>%
+    filter(subject %in% sleepy_subjects) %>%
+    select(subject, session, run, time, sleep.score)
+  
+  return(runs_sessions)
+}
+
+
+inet_sleepy_runs <- get_sleepy_details(inet_data, sleepy_score_min = 6)
+inet_awake_runs <- get_awake_details(inet_data, awake_score_max = 1)
+
