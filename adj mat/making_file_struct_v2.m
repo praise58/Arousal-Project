@@ -7,7 +7,7 @@ filesStructv8 = table2struct(sample);
 filesStructv8 = rmfield(filesStructv8, "Var1");
 
 % Remove unavailable runs
-files_to_remove = [686];
+files_to_remove = 686;
 filesStructv8(files_to_remove) = [];
 
 % Make a struct with FCProc file names.
@@ -136,7 +136,22 @@ idx_sleepy_runs_pm = find(check_sleepy_runs);
 
 matched_sleepy_runs_pm = innerjoin(tableFCPreProc(1:22, cols_pm), sleepy_sample_pm(1:15, cols_pm));
 
-matched_sleepy_runs_pm = addvars(matched_sleepy_runs_pm, repmat('/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCPreproc-24.1.1/sub-1/ses-1/func/', height(matched_sleepy_runs_pm), 1), 'NewVariableNames', 'folder');
+% 11.21.2025, fixed--it was the wrong path
+folder = []; % make a new column for folder
+folder = string(folder);
+matched_sleepy_runs_pm = convertvars(matched_sleepy_runs_pm, {'session'}, "string"); % need to match type
+
+for i=1 : height(matched_sleepy_runs_pm)
+    sub_str = matched_sleepy_runs_pm.subject(i);
+    sess_str = matched_sleepy_runs_pm.session(i);
+
+    folder_str = "/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCProc-24.1.1/sub-" + sub_str + "/ses-" + sess_str + "/func/";
+    
+    folder(end + 1, 1) = folder_str;
+end
+
+matched_sleepy_runs_pm.folder = folder;
+
 matched_sleepy_runs_pm = addvars(matched_sleepy_runs_pm, repmat('resting', height(matched_sleepy_runs_pm), 1), 'NewVariableNames', 'task');
 matched_sleepy_runs_pm = addvars(matched_sleepy_runs_pm, repmat('NaN', height(matched_sleepy_runs_pm), 1), 'NewVariableNames', 'run');
 
@@ -156,7 +171,21 @@ idx_sleepy_runs_inet = find(check_sleepy_runs);
 
 matched_sleepy_runs_inet = innerjoin(tableFCPreProc(:, cols), sleepy_sample_inet(:, cols));
 
-matched_sleepy_runs_inet = addvars(matched_sleepy_runs_inet, repmat('/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCPreproc-24.1.1/sub-1/ses-1/func/', height(matched_sleepy_runs_inet), 1), 'NewVariableNames', 'folder');
+% 11.21.2025, fixed--it was the wrong path
+folder = []; % make a new column for folder
+folder = string(folder);
+matched_sleepy_runs_inet = convertvars(matched_sleepy_runs_inet, {'session', 'run'}, "string"); % need to match type
+
+for i=1 : height(matched_sleepy_runs_inet)
+    sub_str = matched_sleepy_runs_inet.subject(i);
+    sess_str = matched_sleepy_runs_inet.session(i);
+
+    folder_str = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti/derivatives/preproc_FCProc-24.1.1/sub-" + sub_str + "/ses-" + sess_str + "/func/";
+    folder(end + 1, 1) = folder_str;
+end
+
+matched_sleepy_runs_inet.folder = folder;
+
 matched_sleepy_runs_inet = addvars(matched_sleepy_runs_inet, repmat('resting', height(matched_sleepy_runs_inet), 1), 'NewVariableNames', 'task');
 
 % vertical concatenation
@@ -185,7 +214,23 @@ idx_awake_runs_pm = find(check_awake_runs);
 
 matched_awake_runs_pm = innerjoin(tableFCPreProc(1:22, cols_pm), awake_sample_pm(1:9, cols_pm));
 
-matched_awake_runs_pm = addvars(matched_awake_runs_pm, repmat('/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCPreproc-24.1.1/sub-1/ses-1/func/', height(matched_awake_runs_pm), 1), 'NewVariableNames', 'folder');
+% 11.21.2025, fixed--it was the wrong path
+folder = []; % make a new column for folder
+folder = string(folder);
+
+matched_awake_runs_pm = convertvars(matched_awake_runs_pm, {'session'}, "string"); % need to match type
+
+for i=1 : height(matched_awake_runs_pm)
+    sub_str = matched_awake_runs_pm.subject(i);
+    sess_str = matched_awake_runs_pm.session(i);
+
+    folder_str = "/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCProc-24.1.1/sub-" + sub_str + "/ses-" + sess_str + "/func/";
+    
+    folder(end + 1, 1) = folder_str;
+end
+
+matched_awake_runs_pm.folder = folder;
+
 matched_awake_runs_pm = addvars(matched_awake_runs_pm, repmat('resting', height(matched_awake_runs_pm), 1), 'NewVariableNames', 'task');
 matched_awake_runs_pm = addvars(matched_awake_runs_pm, repmat('NaN', height(matched_awake_runs_pm), 1), 'NewVariableNames', 'run');
 
@@ -199,7 +244,25 @@ idx_awake_runs_inet = find(check_awake_runs);
 
 matched_awake_runs_inet = innerjoin(tableFCPreProc(:, cols), awake_sample_inet(:, cols));
 
-matched_awake_runs_inet = addvars(matched_awake_runs_inet, repmat('/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCPreproc-24.1.1/sub-1/ses-1/func/', height(matched_awake_runs_inet), 1), 'NewVariableNames', 'folder');
+
+% 11.21.2025, fixed--it was the wrong path
+folder = []; % make a new column for folder
+folder = string(folder);
+
+matched_awake_runs_inet = convertvars(matched_awake_runs_inet, {'session'}, "string"); % need to match type
+
+for i=1 : height(matched_awake_runs_inet)
+    sub_str = matched_awake_runs_inet.subject(i);
+    sess_str = matched_awake_runs_inet.session(i);
+    run_str = matched_awake_runs_inet.run(i);
+
+    folder_str = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti/derivatives/preproc_FCProc-24.1.1/sub-" + sub_str + "/ses-" + sess_str + "/func/";
+    
+    folder(end + 1, 1) = folder_str;
+end
+
+matched_awake_runs_inet.folder = folder;
+
 matched_awake_runs_inet = addvars(matched_awake_runs_inet, repmat('resting', height(matched_awake_runs_inet), 1), 'NewVariableNames', 'task');
 
 % vertical concatenation
@@ -226,6 +289,7 @@ for i = 1:height(awake_FCPreProc)
     curr_sub = awake_FCPreProc.subject(i);
     curr_sess = awake_FCPreProc.session(i);
     curr_run = awake_FCPreProc.run(i);
+    curr_run = string(curr_run);
 
     if ismember(curr_sub, sleepy_FCPreProc.subject)
         if ismember(curr_sess, sleepy_FCPreProc.session)
@@ -246,5 +310,8 @@ end
 
 num_runs = height(matched_awake_runs_inet) + height(matched_awake_runs_pm) + height(matched_sleepy_runs_inet) + height(matched_sleepy_runs_pm);
 if num_runs ~= height(tableFCPreProc)
-    error('Mismatch in the number of runs: expected %d, found %d', height(tableFCPreProc), num_runs);
+    error('Mismatch in the number of runs');
 end
+
+%11/20/2025, the paths are wrong.
+
