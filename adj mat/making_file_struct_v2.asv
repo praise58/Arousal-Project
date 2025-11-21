@@ -7,7 +7,7 @@ filesStructv8 = table2struct(sample);
 filesStructv8 = rmfield(filesStructv8, "Var1");
 
 % Remove unavailable runs
-files_to_remove = [686];
+files_to_remove = 686;
 filesStructv8(files_to_remove) = [];
 
 % Make a struct with FCProc file names.
@@ -156,7 +156,19 @@ idx_sleepy_runs_inet = find(check_sleepy_runs);
 
 matched_sleepy_runs_inet = innerjoin(tableFCPreProc(:, cols), sleepy_sample_inet(:, cols));
 
-matched_sleepy_runs_inet = addvars(matched_sleepy_runs_inet, repmat('/Volumes/illinois-las-psych-gratton/networks-pm/replica/pm/derivatives/FCPreproc-24.1.1/sub-1/ses-1/func/', height(matched_sleepy_runs_inet), 1), 'NewVariableNames', 'folder');
+% 11.21.2025, fixed--it was the wrong path
+folder = []; % make a new column for folder
+matched_sleepy_runs_inet = convertvars(matched_sleepy_runs_inet, {'session', 'run'}, "string"); % need to match type
+
+for i=1 : height(matched_sleepy_runs_inet)
+    sub_str = matched_sleepy_runs_inet.subject(i);
+    sess_str = matched_sleepy_runs_inet.session(i);
+    run_str = matched_sleepy_runs_inet.run(i);
+
+    folder_str = "/Volumes/illinois-las-psych-gratton/iNetworks/Nifti/derivatives/preproc_FCProc-24.1.1/sub-" + sub_str + "/ses-" + sess_str + "/func/";
+    
+    
+end
 matched_sleepy_runs_inet = addvars(matched_sleepy_runs_inet, repmat('resting', height(matched_sleepy_runs_inet), 1), 'NewVariableNames', 'task');
 
 % vertical concatenation
@@ -208,10 +220,6 @@ awake_FCPreProc = [matched_awake_runs_pm; matched_awake_runs_inet];
 % Save the FCPreProcs for the sleepy subjects!!!
 writetable(awake_FCPreProc, '/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/AdjMat/sleepy_FCPreProc.xlsx')
 
-
-% Re-name "path" to "folder".
-awake_FCPreProc = renamevars(awake_FCPreProc, 'path', 'folder');
-
 % SAVE IT!!!!! YAAAAAY.
 
 writetable(awake_FCPreProc, '/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/AdjMat/awake_FCPreProc.xlsx')
@@ -252,3 +260,6 @@ num_runs = height(matched_awake_runs_inet) + height(matched_awake_runs_pm) + hei
 if num_runs ~= height(tableFCPreProc)
     error('Mismatch in the number of runs: expected %d, found %d', height(tableFCPreProc), num_runs);
 end
+
+%11/20/2025, the paths are wrong.
+
