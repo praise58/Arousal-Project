@@ -7,7 +7,7 @@ atlas = 'Seitzman300'; % What atlas will be used? WARNING: only Seitzman300-res1
 image_size = [91, 109, 91]; % this is for 1mm, change for 2mm
 savepath = sprintf('%s/group_mask_v2.mat', path); %where do you want your group masks saved?
 savepath2 = sprintf('%s/atlas_params_v2.mat', path); %where do you want the new atlas params saved?
-files = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/brain masks/mask_paths.mat");
+files = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/mask_paths.mat");
 
 %%%%%%%%%%%%%%%%%% and end here %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/software/GrattonLab-General-Repo'));
@@ -29,7 +29,7 @@ end
 atlas_params = atlas_parameters_GrattonLab(atlas,atlas_dir);
 roi_data = load_nii_wrapper(atlas_params.MNI_nii_file); %vox by 1
 mask = int16(mask);
-group_mask = roi_data.*mask;%group atlas created!
+group_mask = roi_data.*mask; %group atlas created!
 save(savepath, 'group_mask') %save it, we will use it later
 
 %which are the excluded regions?
