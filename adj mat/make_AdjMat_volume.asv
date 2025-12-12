@@ -88,21 +88,21 @@ for i = 1:length(fullpathsBySubject)
     fmripaths = cellstr( regexprep(string(paths), 'FCPreproc-24\.1\.1', 'fmriprep-24.1.1') );
 
     roi_timeseries_concat = [];
-    tmask_concat = strings(0, 0);
+    tmask_concat = strings(length(files), 1);
 
     for k = 1:numel(files) %read each file with the same (sess,task) and concatenate
-        file_data = load_nii_wrapper(sprintf('%s/%s',paths{k}, files{k})); % loads the voxels by their timepoints
-        file_roi_timeseries{k} = roi_average_timecourse_arousal(file_data,roi_data); % is the average time series for all the voxels for this subject
-        roi_timeseries_concat = [roi_timeseries_concat, file_roi_timeseries{k}];
+        %file_data = load_nii_wrapper(sprintf('%s/%s',paths{k}, files{k})); % loads the voxels by their timepoints
+        %file_roi_timeseries{k} = roi_average_timecourse_arousal(file_data,roi_data); % is the average time series for all the voxels for this subject
+        %roi_timeseries_concat = [roi_timeseries_concat, file_roi_timeseries{k}];
     
         % tmask file:
-        file_info = extractBefore(files(k),'_fmriprep'); % extract the relevant file info from the name (task, ses, run)
-        tmaskFile = sprintf('%s/FD_outputs/%s_desc-tmask_%s.txt',fmripaths{k},file_info{1},FDtype); % is the file path + name
+        file_info = extractBefore(files(k),'_fmriprep') % extract the relevant file info from the name (task, ses, run)
+        tmaskFile = sprintf('%s/FD_outputs/%s_desc-tmask_%s.txt',fmripaths{k},file_info{1},FDtype) % is the file path + name
         tmaskFile = string(tmaskFile);
-        tmask{k} = table2array(readtable(tmaskFile));
-        tmask_concat = [tmask_concat; tmask{k}];
+        tmask{k} = table2array(readtable(tmaskFile))
+        tmask_concat = [tmask_concat; string(tmaskFile)
   
-    
+
         %restrict the data to the time limit
         min_vols = ceil((60*minutes_included)/TR);
         tmask_concat(find(cumsum(tmask_concat) >= min_vols, 1, 'first')+1:end) = 0;
