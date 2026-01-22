@@ -1,9 +1,9 @@
 % Making file_struct_v2
 
-sample = readtable("/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/brain masks/all_paths_v2.csv");
-% turn into struct
-filesStructv8 = table2struct(sample);
-%rm rows column.
+sample = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/mask_paths.mat");
+filesStructv8 = sample.filesStructv8;
+
+% Remove rows column.
 filesStructv8 = rmfield(filesStructv8, "Var1");
 
 % Remove unavailable runs
@@ -53,7 +53,7 @@ file_struct_FCPreProc = [pm_rows; inet_rows];
 tableFCPreProc = struct2table(file_struct_FCPreProc);
 
 % Write the updated table to an Excel file
-writetable(tableFCPreProc, '/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/brain masks/FCPreProc_files.xlsx');
+writetable(tableFCPreProc, '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/FCPreProc_files.xlsx');
 
 
 
@@ -102,7 +102,7 @@ end
 tableFCPreProc = removevars(tableFCPreProc, "name");
 
 % Save the table.
-writetable(tableFCPreProc, '/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/AdjMat/tableFCPreProc_names.xlsx')
+writetable(tableFCPreProc, '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/FCPreProc_files_adj-format.xlsx')
 
 % Trying a different method to make a table.
 path = [];
@@ -111,13 +111,13 @@ task = [];
 session = [];
 run = [];
 
-% Make a new table for sleepy runs.
+%% Make a new table for sleepy runs.
 sleepy_FCPreProc = table(path, subject, task, session, run);
 
 
 % Now we need to divide it up by sleepy and awake runs...
-sleepy_sample_inet = readtable('/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/counting subs/inet_sleepy_runs_v5.csv');
-sleepy_sample_pm = readtable('/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/counting subs/pm_sessions_sleepy.csv');
+sleepy_sample_inet = readtable('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/splitting sample/inet_sleepy_runs_v5.csv');
+sleepy_sample_pm = readtable('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/splitting sample/pm_sessions_sleepy.csv');
 
 sleepy_sample_inet = removevars(sleepy_sample_inet, "Var1");
 sleepy_sample_pm = removevars(sleepy_sample_pm, "Var1");
@@ -192,10 +192,10 @@ matched_sleepy_runs_inet = addvars(matched_sleepy_runs_inet, repmat('resting', h
 sleepy_FCPreProc = [matched_sleepy_runs_pm; matched_sleepy_runs_inet];
 
 % Save the FCPreProcs for the sleepy subjects!!!
-writetable(sleepy_FCPreProc, '/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/AdjMat/sleepy_FCPreProc.xlsx')
+writetable(sleepy_FCPreProc, '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/adj mat/sleepy_FCPreProc_v2.xlsx')
 
 
-% Now for awake runs....
+%% Now for awake runs....
 awake_FCPreProc = table(path, subject, task, session, run);
 
 awake_sample_inet = readtable('/Users/grattonlab/Desktop/Praise_Learning/Arousal-Project/counting subs/inet_awake_runs_v5.csv');
