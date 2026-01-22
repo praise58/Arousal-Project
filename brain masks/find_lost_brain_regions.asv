@@ -15,9 +15,7 @@ difference = setdiff(atlas_params_standard, atlas_params_sample, "stable");
 writematrix(difference, '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/brain masks/regions_lost.xlsx')
 
 %% 1.7.2026 PK. Coordinates of regions lost. 1.8.2026 PK. Labels of nodes.
-coord_standard = readtable("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\ROIs_300inVol_MNI_allInfo.txt");
-coord_standard = removevars(coord_standard, ["radius_mm_", "netWorkbenchLabel", "integrativePercent"]);
-
+8
 missing_coord = readtable("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\brain masks\regions_lost.xlsx");
 missing_coord = table2array(missing_coord);
 
