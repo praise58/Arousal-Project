@@ -9,74 +9,113 @@ function make_AdjMat_volume(file)
 % AT - 30.06.2025: modify to use one input only
 %%%%%%%%%%%%%%%%%
 
-main_path = '/projects/illinois/las/psych/cgratton/networks-pm/arousal'; % Set the folder to put everything in.
-file = sprintf('%s/AT_example.xlsx',main_path); % files: all sleepy or awake file runs 
-
+% Set the folder to put everything in.
+main_path = '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/adj mat';
+file = sprintf('%s/awake_FCPreProc.xlsx', main_path); % files: all sleepy or awake file runs (xlsx)
 data = readtable(file);
+
+% Have to split between folders (pm vs INET)
+pm_data = data(1 : 8, :); % put PM rows into a new table
+data(1:8, :) = []; % remove PM rows from data --> isolate inet rows
+inet_data = data; % re-name as inet_data
+clear data
+
+% I need to get rid of the extra rows.
+inet_data(516:end, :) = [];
+
 atlas_dir = '/projects/illinois/las/psych/cgratton/networks-pm/Atlases'; %Where are the atlases?
-atlas = 'Seitzman300'; %What atlas will be used? WARNING: only Seitzman300-res1 available for 1mm data
+atlas = 'Seitzman300'; %What atlas will be used? 
 FDtype = 'fFD';
 minutes_included = 5; %Change this according to the amount of data you'd like to include
 
 % Add paths to toolbox we need
 addpath(genpath('/projects/illinois/las/psych/cgratton/networks-pm/software/GrattonLab-General-Repo'));
+addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/software/GrattonLab-General-Repo/motion_calc_utilities'));
 addpath(genpath('/projects/illinois/las/psych/cgratton/networks-pm/software/nifti'));
+addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/toolbox/NIfTI_20140122'));
 addpath(genpath('/projects/illinois/las/psych/cgratton/networks-pm/software/hline_vline'));
+addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/toolbox'));
+addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/adj mat'))
 disp('toolboxes loaded')
 
 %% ROI info
-atlas_params = atlas_parameters_GrattonLab(atlas,atlas_dir);
-roi_data = load_nii_wrapper(atlas_params.MNI_nii_file); %vox by 1
+atlas_params = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/atlas_params_v2.mat");
+atlas_params = atlas_params.atlas_params;
+roi_data = load('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/group_mask_v3.mat'); %vox by 1
+roi_data = roi_data.group_mask;
 
 %% Loop through data, extract timecourses. Concatenate by chosen runs
 %you need a list of the individual, unique subjects
-fcproc = data.folder{1}; %assuming the preprocess data is all in the same folder 
-[subjects, filesBySubject, ~, fullpathsBySubject] = assemble_filenames_arousal(data, fcproc, 'ReturnDirsOnly', true);
+fcproc_pm = pm_data.folder{1}; %assuming the preprocess data is all in the same folder
+fcproc_inet = inet_data.folder{1};
 
-for i = 1:length(fullpathsBySubject)
+% I need to do this first for pm, THEN INET.
+[subjects, filesBySubject, ~, fullpathsBySubject] = assemble_filenames_arousal(inet_data, fcproc_inet, 'ReturnDirsOnly', true);
+
+for i = 39:length(fullpathsBySubject)
     subject = subjects{i};
-
-    outDir = [main_path '/corrmats_' atlas '/sub-' subject];
-    if ~exist(outDir) 
+    
+    outDir = [main_path '/corrmats_' atlas '/sub-' subject]; % Make the matrices folder
+    if ~exist(outDir) % If it *doesn't* exist, make it.
         mkdir(outDir);
     end
 
+    % You need all the files and all the paths to build the matrix for one
+    % subject.
     files = filesBySubject{i};
     paths = fullpathsBySubject{i};
     fmripaths = {};
 
-    if contains(files{1,1}, "run-NaN_") %if it is the PM dataset
+    % 12/11/2025, Need to do some major surgery on fmripaths.
+
+    if contains(files{1,1}, "run-NaN_") %if it is the PM dataset, rm empty run strings
         for j=1:length(files)
             files(j) = erase(files(j), "run-NaN_");
         end
-        fmripaths = cellstr( regexprep(string(paths), 'FCPreproc-24\.1\.1', 'fmriprep-24.1.1') );
         TR=0.594;
+
     else 
-        files = cellstr( regexprep(string(files), 'resting', 'rest') );
-        fmripaths = cellstr( regexprep(string(paths), 'preproc_FCProc-24\.1\.1', 'preproc_fmriprep-24.1.1') );
+        files = cellstr(regexprep(string(files), 'resting', 'rest') ); % re-name resting to rest
         TR=1.1;
     end
+
+    % Fixing naming errors.
+    % for some reason, the part after /func was repeated. This gets rid of
+    % that error for all char arrays in the paths array.
+
+    paths = cellstr(regexprep(string(paths), '/projects/illinois/las/psych/cgratton', '/Volumes/illinois-las-psych-gratton'));
+    % paths = cellstr( regexprep(string(paths), 'FCProc-24.1.1', 'FCPreproc-24.1.1') ); %YOU MAY NEED TO CHANGE 'FCProc' TO 'FCPreProc' OR VICE VERSA!!!!
+   
+    paths = strip(paths, 'right', '/');
+   
+    % PM: paths = regexprep(string(paths), '(\/func)\/sub-\d+\/ses-\d+\/func\/?$', '$1');
+    paths = regexprep(paths,'(.*?/)(sub-[^/]+/ses-[^/]+/func)/\2', '$1$2');
+
+    %YOU MAY NEED TO CHANGE 'FCProc' TO 'FCPreProc' OR VICE VERSA!!!!
+    fmripaths = cellstr( regexprep(string(paths), 'FCProc-24\.1\.1', 'fmriprep-24.1.1') );
 
     roi_timeseries_concat = [];
     tmask_concat = [];
 
     for k = 1:numel(files) %read each file with the same (sess,task) and concatenate
-        file_data = load_nii_wrapper(sprintf('%s/%s',paths{k}, files{k})); %vox by timepoints
-        file_roi_timeseries{k} = roi_average_timecourse(file_data,roi_data);
-        roi_timeseries_concat = [roi_timeseries_concat file_roi_timeseries{k}];
+        file_data = load_nii_wrapper(sprintf('%s/%s',paths{k}, files{k})); % loads the voxels by their timepoints
+        file_roi_timeseries{k} = roi_average_timecourse_arousal(file_data,roi_data); % is the average time series for all the voxels for this subject
+        roi_timeseries_concat = [roi_timeseries_concat, file_roi_timeseries{k}];
     
         % tmask file:
-        file_info = extractBefore(files(k),'_fmriprep');
-        tmaskFile = sprintf('%s/FD_outputs/%s_desc-tmask_%s.txt',fmripaths{k},file_info{1},FDtype);
+        file_info = extractBefore(files(k),'_fmriprep'); % extract the relevant file info from the name (task, ses, run)
+        tmaskFile = sprintf('%s/FD_outputs/%s_desc-tmask_%s.txt',fmripaths{k},file_info{1},FDtype); % is the file path + name
+        tmaskFile = string(tmaskFile);
         tmask{k} = table2array(readtable(tmaskFile));
         tmask_concat = [tmask_concat; tmask{k}];
-    end
+  
+    
+        %restrict the data to the time limit
+        min_vols = ceil((60*minutes_included)/TR);
+        tmask_concat(find(cumsum(tmask_concat) >= min_vols, 1, 'first')+1:end) = 0;
 
-        %restric the data to the time limit
-        num_vols = ceil((60*minutes_included)/TR);
-        tmask_concat(find(cumsum(tmask_concat) >= num_vols, 1, 'first')+1:end) = 0;
-
-        % apply tmask to timeseries and calculate correlations
+        % apply tmask to timeseries andb calculate correlations with every
+        % ROI x every ROI
         corrmat = paircorr_mod(roi_timeseries_concat(:,logical(tmask_concat))');
 
         file_info = regexprep(files(k), '_run-\d+.*$', ''); %no run-X in this string
@@ -87,14 +126,15 @@ for i = 1:length(fullpathsBySubject)
         figure_corrmat_GrattonLab(corrmat,atlas_params,-1,1);
         saveas(gcf,[fout_str '.tiff'],'tiff');
         close(gcf);
-
+        
         % save out files
         save([fout_str '.mat'],'file_roi_timeseries','roi_timeseries_concat','tmask','tmask_concat','corrmat');
     end  
+
 end
 
 
-function roi_ts_avg = roi_average_timecourse(bold_data,roi_data)
+function roi_ts_avg = roi_average_timecourse_arousal(bold_data,roi_data)
 
 nrois = unique(roi_data);
 nrois = nrois(nrois>0); % assume 0 is not an ROI
