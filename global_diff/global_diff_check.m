@@ -1,0 +1,95 @@
+%% 2.2.2026 PK. This code checks how similar between subjects correlations are with each other.
+% Each connectivity matrix is 286 x 286. I only need the upper triangle,
+% minus the identity. That means I only need the matrices of (286 / 2) - 1.
+% That would equal 142 x 142 matrices.
+path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Project");
+load(fullfile(path, "nbs", "between", "between_matrices.mat"))
+
+corr_array = {};
+num_sub = size(between_matrices, 3);
+
+for i = 1:num_sub
+    matrix = between_matrices(:, :, i);
+    
+    % triu() only preserves the upper right triangle.
+    tri = triu(matrix, 1);
+    
+    % Turns it into a vector.
+    vec = tri(:);
+    
+    % Remove the 0s (repeats).
+    vec(vec == 0) = [];
+    
+    % Store the subject's correlations in a cell array.
+    corr_array{i} = vec;
+end
+
+btw_matrix = [corr_array{:}];
+
+% Correlate each subject's vectorized correlations with every other
+% subject's vectorized correlations.
+btw_corr = corr(btw_matrix);
+
+%% 2.5.2026 PK. Visualize btw_corr using heatmap.
+labels = {"A" + (1:20), "S" + (1:20)};
+labels = [labels{:}];
+labels = string(labels);
+
+btw_corr_h = heatmap(labels, labels, btw_corr);
+btw_corr_h.ColorLimits = [.09 1];
+btw_corr_h.Colormap = turbo(200);
+btw_corr_h.ColorbarVisible = 'on';
+btw_corr_h.Title = "Between Subject Similarity Matrix";
+btw_corr_h.XLabel = "Subjects";
+btw_corr_h.YLabel = "Subjects";
+
+
+
+%% 1.29.2026 PK. I need to conduct a t-test on whether there are differences in global activation within and between subject.
+
+btw_mat_awake = between_matrices(:, :, 1:20);
+btw_mat_sleepy = between_matrices(:, :, 21:40);
+
+avr_btw_mat_awake = mean(btw_mat_awake, 3);
+avr_btw_mat_sleepy = mean(btw_mat_sleepy, 3);
+
+avr_btw_mat_awake = triu(avr_btw_mat_awake);
+avr_btw_mat_sleepy = triu(avr_btw_mat_sleepy);
+
+avr_btw_vec_awake = avr_btw_mat_awake(:);
+avr_btw_vec_sleepy = avr_btw_mat_sleepy(:);
+
+% ttest2 for independent subjects.
+[h, p, ci] = ttest2(avr_btw_vec_awake, avr_btw_vec_sleepy);
+
+%% Histogram global corr differences
+figure;
+edges = -.4:.025:.6;
+
+hist_awake = histogram(avr_btw_vec_awake, edges, 'Normalization', 'probability', 'FaceAlpha', .3');
+hold on
+hist_sleepy = histogram(avr_btw_vec_sleepy, edges, 'Normalization', 'probability', 'FaceAlpha', .3');
+
+hist_awake.FaceColor = [0 0.4470 0.7410]; % blue
+hist_sleepy.FaceColor = [0.8500 0.3250 0.0980]; % orange
+
+hold off;
+
+%% The histogram distributions look the same, but the ttest is significant, cohen small.
+
+n_sleepy = numel(avr_btw_vec_sleepy); n_awake = numel(avr_btw_vec_awake);
+m_sleepy = mean(avr_btw_vec_sleepy); m_awake = mean(avr_btw_vec_awake);
+std_sleepy = std(avr_btw_vec_sleepy); std_awake = std(avr_btw_vec_awake);
+
+sp = sqrt(((n_sleepy-1)*std_sleepy^2 + (n_awake-1)*std_awake^2) / (n_sleepy+n_awake-2));
+cohens_d = (m_sleepy - m_awake)/sp;
+fprintf('Cohen''s d = %.4f\n', cohens_d);
+
+
+%% 2.6.2026 PK. Same checks for within subject.
+clear all
+
+path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Project");
+clear path
+load(fullfile(path, "nbs", "within", "within_matrices.mat"))
+
