@@ -44,6 +44,79 @@ btw_corr_h.XLabel = "Subjects";
 btw_corr_h.YLabel = "Subjects";
 
 
+%% 2.9.2026 PK. I need to make separate heatmaps for awake and sleepy, then subtract.
+labels_A  = {"A" + (1:20)};
+labels_A = [labels_A(:)];
+labels_A = string(labels_A);
+
+labels_S = {"S" + (1:20)};
+labels_S = [labels_S(:)];
+labels_S = string(labels_S);
+
+M_between_awake = between_matrices(:, :, 1:20);
+M_between_sleepy = between_matrices(:, :, 21:40);
+
+corr_array_A = {};
+corr_array_S = {};
+
+num_sub = size(M_between_awake, 3);
+
+matrix_A = M_between_awake(:, :, i);
+matrix_S = M_between_sleepy(:, :, i);
+
+% Average the conditions' matrices within each other.
+avr_A = mean(matrix_A, 3);
+avr_S = mean(matrix_S, 3);
+
+btw_subtracted_corr_as = avr_A - avr_S;
+btw_subtracted_corr_sa = avr_S - avr_A;
+
+
+btw_subtracted_corr_as_h = heatmap(btw_subtracted_corr_as);
+btw_subtracted_corr_as_h.ColorLimits = [.09 1];
+btw_subtracted_corr_as_h.Colormap = turbo(200);
+btw_subtracted_corr_as_h.ColorbarVisible = 'on';
+btw_subtracted_corr_as_h.Title = "Subtracted Between Subject Similarity (Awake - Sleepy)";
+btw_subtracted_corr_as_h.XLabel = "Subjects";
+btw_subtracted_corr_as_h.YLabel = "Subjects";
+
+btw_subtracted_corr_sa_h = heatmap(btw_subtracted_corr_sa);
+btw_subtracted_corr_sa_h.ColorLimits = [.09 1];
+btw_subtracted_corr_sa_h.Colormap = turbo(200);
+btw_subtracted_corr_sa_h.ColorbarVisible = 'on';
+btw_subtracted_corr_sa_h.Title = "Subtracted Between Subject Similarity (Sleepy - Awake)";
+btw_subtracted_corr_sa_h.XLabel = "Subjects";
+btw_subtracted_corr_sa_h.YLabel = "Subjects";
+
+
+% Something is very off with these heat maps. The max is above 1, not a
+% correlation.
+
+ana_corr_mat = load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\sub-1_sleepy_example_matrix.mat");
+ana_corr_mat = ana_corr_mat.corrmat;
+min_ana_comat = min(min(ana_corr_mat));
+max_ana_comat = max(max(ana_corr_mat));
+
+%% 2.16.2026 PK. Display just the heatmaps of the condit
+figure;
+subplot(1, 3, 1)
+h1 = heatmap(avr_A, 'Colormap', jet)
+h1.GridVisible = 'off';
+axis equal; 
+
+subplot(1, 3, 2)
+h2 = heatmap(avr_S, 'Colormap', jet)
+h2.GridVisible = 'off';
+axis equal; 
+
+subplot(1, 3, 3)
+h3 = heatmap(avr_A - avr_S, 'Colormap', jet)
+h3.GridVisible = 'off';
+axis equal; 
+
+%% Visualize heatmap differences within subject conditions.
+
+%% run t tests (sleep > awake)
 
 %% 1.29.2026 PK. I need to conduct a t-test on whether there are differences in global activation within and between subject.
 
@@ -93,3 +166,4 @@ path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton",
 clear path
 load(fullfile(path, "nbs", "within", "within_matrices.mat"))
 
+%% 2.16.2025 PK
