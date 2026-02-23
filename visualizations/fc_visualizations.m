@@ -1,3 +1,4 @@
+%% 2.19.2026 PK. I'm moving all of my visualizations to this script.
 %% 2.2.2026 PK. This code checks how similar between subjects correlations are with each other.
 % Each connectivity matrix is 286 x 286. I only need the upper triangle,
 % minus the identity. That means I only need the matrices of (286 / 2) - 1.
@@ -46,30 +47,20 @@ btw_corr_h.YLabel = "Subjects";
 
 %% 2.9.2026 PK. I need to make separate heatmaps for awake and sleepy, then subtract.
 labels_A  = {"A" + (1:20)};
-labels_A = [labels_A(:)];
-labels_A = string(labels_A);
+labels_A = labels_A{1};
 
 labels_S = {"S" + (1:20)};
-labels_S = [labels_S(:)];
-labels_S = string(labels_S);
+labels_S = labels_S{1};
 
-M_between_awake = between_matrices(:, :, 1:20);
-M_between_sleepy = between_matrices(:, :, 21:40);
-
-corr_array_A = {};
-corr_array_S = {};
-
-num_sub = size(M_between_awake, 3);
-
-matrix_A = M_between_awake(:, :, i);
-matrix_S = M_between_sleepy(:, :, i);
+matrix_A = between_matrices(:, :, 1:20);
+matrix_S = between_matrices(:, :, 21:40);
 
 % Average the conditions' matrices within each other.
 avr_A = mean(matrix_A, 3);
 avr_S = mean(matrix_S, 3);
 
-btw_subtracted_corr_as = avr_A - avr_S;
-btw_subtracted_corr_sa = avr_S - avr_A;
+avr_AS = avr_A - avr_S;
+avr_SA = avr_S - avr_A;
 
 
 btw_subtracted_corr_as_h = heatmap(btw_subtracted_corr_as);
@@ -97,73 +88,42 @@ ana_corr_mat = ana_corr_mat.corrmat;
 min_ana_comat = min(min(ana_corr_mat));
 max_ana_comat = max(max(ana_corr_mat));
 
-%% 2.16.2026 PK. Display just the heatmaps of the condit
-figure;
-subplot(1, 3, 1)
-h1 = heatmap(avr_A, 'Colormap', jet)
-h1.GridVisible = 'off';
-axis equal; 
+%% 2.16.2026 PK. Display just the averaged heatmaps within conditions for btw subjects.
 
-subplot(1, 3, 2)
-h2 = heatmap(avr_S, 'Colormap', jet)
-h2.GridVisible = 'off';
-axis equal; 
+% I will use figure_corrmat_GrattonLab() from the Gratton Lab general repo to construct the heat maps.
+% figure_corrmat_GrattonLab(matrix, atlasparams, varargin, titletext) varargin = -1, 1
 
-subplot(1, 3, 3)
-h3 = heatmap(avr_A - avr_S, 'Colormap', jet)
-h3.GridVisible = 'off';
-axis equal; 
+addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\toolbox\FCProcess"))
+addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\GrattonLab-General-Repo-20251225T012749Z-1-001\GrattonLab-General-Repo\motion_calc_utilities"))
+load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\brain masks\atlas_params_v3.mat")
+load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\better_jet_colormap.mat")
 
-%% Visualize heatmap differences within subject conditions.
+% btw matric
+h1 = corr_mat_subplot(avr_A, atlas_params, subplot(1, 3, 1), "FC for High Arousal Group", -1, 1);
+h2 = corr_mat_subplot(avr_S, atlas_params, subplot(1, 3, 2), "FC for Low Arousal Group", -1, 1);
+h3 = corr_mat_subplot(avr_AS, atlas_params, subplot(1, 3, 3),"High - Low", -.4, .4);
 
-%% run t tests (sleep > awake)
-
-%% 1.29.2026 PK. I need to conduct a t-test on whether there are differences in global activation within and between subject.
-
-btw_mat_awake = between_matrices(:, :, 1:20);
-btw_mat_sleepy = between_matrices(:, :, 21:40);
-
-avr_btw_mat_awake = mean(btw_mat_awake, 3);
-avr_btw_mat_sleepy = mean(btw_mat_sleepy, 3);
-
-avr_btw_mat_awake = triu(avr_btw_mat_awake);
-avr_btw_mat_sleepy = triu(avr_btw_mat_sleepy);
-
-avr_btw_vec_awake = avr_btw_mat_awake(:);
-avr_btw_vec_sleepy = avr_btw_mat_sleepy(:);
-
-% ttest2 for independent subjects.
-[h, p, ci] = ttest2(avr_btw_vec_awake, avr_btw_vec_sleepy);
-
-%% Histogram global corr differences
-figure;
-edges = -.4:.025:.6;
-
-hist_awake = histogram(avr_btw_vec_awake, edges, 'Normalization', 'probability', 'FaceAlpha', .3');
-hold on
-hist_sleepy = histogram(avr_btw_vec_sleepy, edges, 'Normalization', 'probability', 'FaceAlpha', .3');
-
-hist_awake.FaceColor = [0 0.4470 0.7410]; % blue
-hist_sleepy.FaceColor = [0.8500 0.3250 0.0980]; % orange
-
-hold off;
-
-%% The histogram distributions look the same, but the ttest is significant, cohen small.
-
-n_sleepy = numel(avr_btw_vec_sleepy); n_awake = numel(avr_btw_vec_awake);
-m_sleepy = mean(avr_btw_vec_sleepy); m_awake = mean(avr_btw_vec_awake);
-std_sleepy = std(avr_btw_vec_sleepy); std_awake = std(avr_btw_vec_awake);
-
-sp = sqrt(((n_sleepy-1)*std_sleepy^2 + (n_awake-1)*std_awake^2) / (n_sleepy+n_awake-2));
-cohens_d = (m_sleepy - m_awake)/sp;
-fprintf('Cohen''s d = %.4f\n', cohens_d);
-
-
-%% 2.6.2026 PK. Same checks for within subject.
-clear all
-
+%% 2.19.2026 PK. Visualize heatmap differences within subject conditions.
 path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Project");
-clear path
 load(fullfile(path, "nbs", "within", "within_matrices.mat"))
 
-%% 2.16.2025 PK
+A_prec_mat = within_matrices(:, :, [1 2 7]);
+S_prec_mat = within_matrices(:, :, [14 15 21]);
+AS_prec_mat = A_prec_mat - S_prec_mat;
+
+% PM01 FC
+h4 = corr_mat_subplot(A_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 1), "FC PM001 High Arousal", -1, 1);
+h5 = corr_mat_subplot(S_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 2), "FC PM001 Low Arousal", -1, 1);
+h6 = corr_mat_subplot(AS_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 3), "FC PM001 High - Low", -.4, .4);
+
+% INET002 FC
+h7 = corr_mat_subplot(A_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 4), "FC INET002 High Arousal", -1, 1);
+h8 = corr_mat_subplot(S_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 5), "FC INET002 Low Arousal", -1, 1);
+h9 = corr_mat_subplot(AS_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 6), "FC INET002 High - Low", -.4, .4);
+
+% INET063 FC
+h10 = corr_mat_subplot(A_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 7), "FC INET063 High Arousal", -1, 1);
+h11 = corr_mat_subplot(S_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 8), "FC INET063 Low Arousal", -1, 1);
+h12 = corr_mat_subplot(AS_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 9), "FC INET063 High - Low", -.4, .4);
+
+%% run t tests (sleep > awake)

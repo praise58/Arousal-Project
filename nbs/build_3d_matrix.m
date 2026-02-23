@@ -96,7 +96,7 @@ save(save_file, 'matrices_all');
 
 %% 1.23.2026 PK. I need to split the 3d matrix into one for within subject analyses and one for between.
 
-load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\matrices_all_v2.mat");
+load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\matrices_all.mat");
 
 % Based on final_sample.txt
 within_sub_idx = [1, 2, 3, 4, 12, 15, 19, 20, 24, 25, 28, 29, 31, 32, 35, 36, 37, 38, 46, 49, 53, 54, 58, 59, 62, 63, 65, 66];
@@ -106,9 +106,9 @@ between_sub_idx = 1:68;
 between_sub_idx(within_sub_idx) = [];
 between_matrices = matrices_all_v2(:, :, between_sub_idx);
 
-save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'within_matrices.mat');
+save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'within', 'within_matrices.mat');
 save(save_file, "within_matrices")
-save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'between_matrices.mat');
+save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'between', 'between_matrices.mat');
 save(save_file, "between_matrices")
 
 %% 1.28.2026 PK. I need to make the correct design matrices.
