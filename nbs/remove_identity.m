@@ -21,18 +21,14 @@ for i = 1:n
 
     % Clamp to open interval (-1, 1) to avoid Inf in atanh
     mat = max(min(mat, 1 - tol), -1 + tol);
-
+    
     % Fisher z-transform
     mat = atanh(mat);
 
     matrices_all_v2(:, :, i) = mat;
-
-    matrices_all_v2(:, :, i) = tanh(matrices_all_v2(:, :, i));
-
 end
 
-save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'matrices_all_v2.mat');
+save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'matrices_all.mat');
 save(save_file, 'matrices_all_v2');
 
-test = matrices_all_v2(:, :, i);
-figure; heatmap(test, 'Colormap', jet)
+%% Proceed to build_3d_matrix.m to split matrices_all_v2 into between and within
