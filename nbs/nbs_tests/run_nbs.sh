@@ -12,6 +12,7 @@
 module load matlab
 
 THRES=$1
+TEST=$2
 
 main_path="/projects/illinois/las/psych/cgratton/networks-pm"
 
@@ -23,7 +24,7 @@ mkdir -p ${LOG_DIR}
 echo "Running NBS for threshold: ${THRES}"
 
 # Run MATLAB script with subject ID and log output
-matlab -nodisplay -nosplash -r "addpath(genpath('${SCRIPT_DIR}')); my_NBS_test('${THRES}'); exit;" > ${LOG_DIR}/NBS_${THRES}.log 2>&1
+matlab -nodisplay -nosplash -r "addpath(genpath('${SCRIPT_DIR}')); my_NBS_test('${THRES}','${TEST}'); exit;" > ${LOG_DIR}/NBS_${THRES}_${TEST}.log 2>&1
 
 # Print completion message
 echo "NBS completed for threshold ${THRES}. Log saved to ${LOG_DIR}/NBS_${THRES}.log"#!/usr/bin/bash

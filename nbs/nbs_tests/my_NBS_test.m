@@ -1,4 +1,4 @@
-function my_NBS_test(thres)
+function my_NBS_test(thres, test)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This script runs the Networks-based statistic (NBS) toolbox without the %
 % need of the GUI. (More info about NBS in https://doi.org/10.1016/j.     %
@@ -34,7 +34,7 @@ node_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\
 
 
 % Other parameters
-% thres = 4.00; 
+%thres = 4.00; 
 pipeline = 'Forward'; %'Forward' or 'Inverse'
 %test = 't-test';
 N = 286; %number of ROIs 286 for PK sample
