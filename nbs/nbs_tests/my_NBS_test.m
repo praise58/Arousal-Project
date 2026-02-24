@@ -16,7 +16,8 @@ function my_NBS_test(thres)
 addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\NBS1.2"));
 
 % paths
-NBS_fname = ["Ftest_thres" thres "_btw.mat"];
+
+NBS_fname = [test "_thres" thres "_btw.mat"];
 savepath = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\" + NBS_fname;
 
 matrices = "between_matrices.mat";
@@ -35,7 +36,7 @@ node_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\
 % Other parameters
 % thres = 4.00; 
 pipeline = 'Forward'; %'Forward' or 'Inverse'
-test = 't-test';
+%test = 't-test';
 N = 286; %number of ROIs 286 for PK sample
 data = data_path;
 design_mat = design_path;
@@ -50,7 +51,7 @@ UI.size.ui = 'Extent'; %'Extent' | 'Intensity'
 UI.thresh.ui = num2str(thres); 
 UI.perms.ui = '5000'; 
 UI.alpha.ui = '0.05'; 
-UI.contrast.ui = '[1 1]';%'[0 0 0 0 0 1]'; %which group is assumed to be bigger?
+UI.contrast.ui = '[1 -1]';%'[0 0 0 0 0 1]'; %which group is assumed to be bigger?
 UI.design.ui = design_mat; 
 UI.exchange.ui = ''; 
 UI.matrices.ui = data; 
