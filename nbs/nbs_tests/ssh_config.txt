@@ -1,0 +1,6 @@
+Host cc-login.campuscluster.illinois.edu
+HostName cc-login.campuscluster.illinois.edu
+User <your_username>
+ControlMaster auto
+ControlPath ~/.ssh/control-%r@%h:%p
+ControlPersist 10m
