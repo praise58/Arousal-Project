@@ -1,4 +1,4 @@
-function my_NBS_test(idx)
+function my_NBS_test(thres)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This script runs the Networks-based statistic (NBS) toolbox without the %
 % need of the GUI. (More info about NBS in https://doi.org/10.1016/j.     %
@@ -16,7 +16,7 @@ function my_NBS_test(idx)
 addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\NBS1.2"));
 
 % paths
-NBS_fname = "Ftest_thres4_btw.mat";
+NBS_fname = ["Ftest_thres" thres "_btw.mat"];
 savepath = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\" + NBS_fname;
 
 matrices = "between_matrices.mat";
@@ -33,9 +33,9 @@ node_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\
 
 
 % Other parameters
-thres = 4.00; 
+% thres = 4.00; 
 pipeline = 'Forward'; %'Forward' or 'Inverse'
-test = 'F-test';
+test = 't-test';
 N = 286; %number of ROIs 286 for PK sample
 data = data_path;
 design_mat = design_path;
