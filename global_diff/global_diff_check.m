@@ -1,3 +1,30 @@
+% i copy pasted these but idk where they came from
+btw_subtracted_corr_as_h = heatmap(btw_subtracted_corr_as);
+btw_subtracted_corr_as_h.ColorLimits = [.09 1];
+btw_subtracted_corr_as_h.Colormap = turbo(200);
+btw_subtracted_corr_as_h.ColorbarVisible = 'on';
+btw_subtracted_corr_as_h.Title = "Subtracted Between Subject Similarity (Awake - Sleepy)";
+btw_subtracted_corr_as_h.XLabel = "Subjects";
+btw_subtracted_corr_as_h.YLabel = "Subjects";
+
+btw_subtracted_corr_sa_h = heatmap(btw_subtracted_corr_sa);
+btw_subtracted_corr_sa_h.ColorLimits = [.09 1];
+btw_subtracted_corr_sa_h.Colormap = turbo(200);
+btw_subtracted_corr_sa_h.ColorbarVisible = 'on';
+btw_subtracted_corr_sa_h.Title = "Subtracted Between Subject Similarity (Sleepy - Awake)";
+btw_subtracted_corr_sa_h.XLabel = "Subjects";
+btw_subtracted_corr_sa_h.YLabel = "Subjects";
+
+
+% Something is very off with these heat maps. The max is above 1, not a
+% correlation.
+
+ana_corr_mat = load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\sub-1_sleepy_example_matrix.mat");
+ana_corr_mat = ana_corr_mat.corrmat;
+min_ana_comat = min(min(ana_corr_mat));
+max_ana_comat = max(max(ana_corr_mat));
+
+
 %% 1.29.2026 PK. I need to conduct a t-test on whether there are differences in global activation within and between subject.
 
 btw_mat_awake = between_matrices(:, :, 1:20);
