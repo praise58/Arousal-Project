@@ -14,13 +14,15 @@ function my_NBS_test(thres, test)
 
 %add required paths
 %addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\NBS1.2"));
-addpath(genpath())
+%PC^
+addpath(genpath("/projects/illinois/las/psych/cgratton/networks-pm/arousal/Arousal-Project/toolbox/NBS1.2")) % Cluster
+
 % paths
 cluster_path = "/projects/illinois/las/psych/cgratton/networks-pm/arousal/Arousal-Project/";
 pc_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\between\";
 
 NBS_fname = [test "_thres" thres "_btw.mat"];
-savepath = cluster_path + "nbs/nbs_tests" + NBS_fname;
+savepath = cluster_path + "nbs/nbs_tests/" + NBS_fname;
 
 matrices = "between_matrices.mat";
 data_path = cluster_path + "nbs/between" + matrices;
