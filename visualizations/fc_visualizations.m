@@ -46,12 +46,6 @@ btw_corr_h.YLabel = "Subjects";
 
 
 %% 2.9.2026 PK. I need to make separate heatmaps for awake and sleepy, then subtract.
-labels_A  = {"A" + (1:20)};
-labels_A = labels_A{1};
-
-labels_S = {"S" + (1:20)};
-labels_S = labels_S{1};
-
 matrix_A = between_matrices(:, :, 1:20);
 matrix_S = between_matrices(:, :, 21:40);
 
@@ -61,32 +55,6 @@ avr_S = mean(matrix_S, 3);
 
 avr_AS = avr_A - avr_S;
 avr_SA = avr_S - avr_A;
-
-
-btw_subtracted_corr_as_h = heatmap(btw_subtracted_corr_as);
-btw_subtracted_corr_as_h.ColorLimits = [.09 1];
-btw_subtracted_corr_as_h.Colormap = turbo(200);
-btw_subtracted_corr_as_h.ColorbarVisible = 'on';
-btw_subtracted_corr_as_h.Title = "Subtracted Between Subject Similarity (Awake - Sleepy)";
-btw_subtracted_corr_as_h.XLabel = "Subjects";
-btw_subtracted_corr_as_h.YLabel = "Subjects";
-
-btw_subtracted_corr_sa_h = heatmap(btw_subtracted_corr_sa);
-btw_subtracted_corr_sa_h.ColorLimits = [.09 1];
-btw_subtracted_corr_sa_h.Colormap = turbo(200);
-btw_subtracted_corr_sa_h.ColorbarVisible = 'on';
-btw_subtracted_corr_sa_h.Title = "Subtracted Between Subject Similarity (Sleepy - Awake)";
-btw_subtracted_corr_sa_h.XLabel = "Subjects";
-btw_subtracted_corr_sa_h.YLabel = "Subjects";
-
-
-% Something is very off with these heat maps. The max is above 1, not a
-% correlation.
-
-ana_corr_mat = load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\sub-1_sleepy_example_matrix.mat");
-ana_corr_mat = ana_corr_mat.corrmat;
-min_ana_comat = min(min(ana_corr_mat));
-max_ana_comat = max(max(ana_corr_mat));
 
 %% 2.16.2026 PK. Display just the averaged heatmaps within conditions for btw subjects.
 
@@ -98,10 +66,10 @@ addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\GrattonLab-Gener
 load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\brain masks\atlas_params_v3.mat")
 load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\better_jet_colormap.mat")
 
-% btw matric
+% btw
 h1 = corr_mat_subplot(avr_A, atlas_params, subplot(1, 3, 1), "FC for High Arousal Group", -1, 1);
 h2 = corr_mat_subplot(avr_S, atlas_params, subplot(1, 3, 2), "FC for Low Arousal Group", -1, 1);
-h3 = corr_mat_subplot(avr_AS, atlas_params, subplot(1, 3, 3),"High - Low", -.4, .4);
+h3 = corr_mat_subplot(avr_AS, atlas_params, subplot(1, 3, 3),"FC High - Low", -.4, .4);
 
 %% 2.19.2026 PK. Visualize heatmap differences within subject conditions.
 path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Project");
@@ -110,6 +78,7 @@ load(fullfile(path, "nbs", "within", "within_matrices.mat"))
 A_prec_mat = within_matrices(:, :, [1 2 7]);
 S_prec_mat = within_matrices(:, :, [14 15 21]);
 AS_prec_mat = A_prec_mat - S_prec_mat;
+
 
 % PM01 FC
 h4 = corr_mat_subplot(A_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 1), "FC PM001 High Arousal", -1, 1);
@@ -125,5 +94,7 @@ h9 = corr_mat_subplot(AS_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 6), "FC 
 h10 = corr_mat_subplot(A_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 7), "FC INET063 High Arousal", -1, 1);
 h11 = corr_mat_subplot(S_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 8), "FC INET063 Low Arousal", -1, 1);
 h12 = corr_mat_subplot(AS_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 9), "FC INET063 High - Low", -.4, .4);
+
+set(gcf, 'Position', [100 100 1400 600]);
 
 %% run t tests (sleep > awake)

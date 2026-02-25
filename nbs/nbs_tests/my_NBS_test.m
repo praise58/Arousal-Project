@@ -13,24 +13,26 @@ function my_NBS_test(thres, test)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %add required paths
-addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\NBS1.2"));
-
+%addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\NBS1.2"));
+addpath(genpath())
 % paths
+cluster_path = "/projects/illinois/las/psych/cgratton/networks-pm/arousal/Arousal-Project/";
+pc_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\between\";
 
 NBS_fname = [test "_thres" thres "_btw.mat"];
-savepath = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\" + NBS_fname;
+savepath = cluster_path + "nbs/nbs_tests" + NBS_fname;
 
 matrices = "between_matrices.mat";
-data_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\between\" + matrices;
+data_path = cluster_path + "nbs/between" + matrices;
 
 design_matrices = "between_design_matrix.mat";
-design_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\between\" + design_matrices;
+design_path = cluster_path + "nbs/between" + design_matrices;
 
 labels = "labels.txt";
-labels_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\" + labels;
+labels_path = cluster_path + "nbs/" + labels;
 
 node_coord = "node_coordinates.txt";
-node_path = "C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\" + node_coord;
+node_path = cluster_path + "nbs/" + node_coord;
 
 
 % Other parameters
