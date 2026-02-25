@@ -14,10 +14,10 @@ module load matlab
 THRES=$1
 TEST=$2
 
-main_path="/projects/illinois/las/psych/cgratton/networks-pm"
+main_path="/projects/illinois/las/psych/cgratton/networks-pm/arousal"
 
-SCRIPT_DIR="${main_path}/arousal/"
-LOG_DIR="${main_path}/arousal/logs"
+SCRIPT_DIR="${main_path}/arousal/nbs/nbs_tests"
+LOG_DIR="${main_path}/arousal/nbs/nbs_tests/logs"
 mkdir -p ${LOG_DIR}
 
 # Print debug message
