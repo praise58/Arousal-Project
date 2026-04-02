@@ -62,14 +62,13 @@ avr_SA = avr_S - avr_A;
 % figure_corrmat_GrattonLab(matrix, atlasparams, varargin, titletext) varargin = -1, 1
 
 addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\toolbox\FCProcess"))
-addpath(genpath("C:\Users\tempu\Downloads\research\labs\gratton\GrattonLab-General-Repo-20251225T012749Z-1-001\GrattonLab-General-Repo\motion_calc_utilities"))
-load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\brain masks\atlas_params_v3.mat")
+load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\brain_masks\atlas_params_v3.mat")
 load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\visualizations\better_jet_colormap.mat")
 
 % btw
-h1 = corr_mat_subplot(avr_A, atlas_params, subplot(1, 3, 1), "FC for High Arousal Group", -1, 1);
-h2 = corr_mat_subplot(avr_S, atlas_params, subplot(1, 3, 2), "FC for Low Arousal Group", -1, 1);
-h3 = corr_mat_subplot(avr_AS, atlas_params, subplot(1, 3, 3),"FC High - Low", -.4, .4);
+h1 = corr_mat_subplot(avr_A, atlas_params, subplot(1, 3, 1), "FC for High Arousal Group", -.8, .8);
+h2 = corr_mat_subplot(avr_S, atlas_params, subplot(1, 3, 2), "FC for Low Arousal Group", -.8, .8);
+h3 = corr_mat_subplot(avr_SA, atlas_params, subplot(1, 3, 3),"FC Low - High", -.4, .4);
 
 %% 2.19.2026 PK. Visualize heatmap differences within subject conditions.
 path = fullfile("C:\Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Project");
@@ -77,23 +76,22 @@ load(fullfile(path, "nbs", "within", "within_matrices.mat"))
 
 A_prec_mat = within_matrices(:, :, [1 2 7]);
 S_prec_mat = within_matrices(:, :, [14 15 21]);
-AS_prec_mat = A_prec_mat - S_prec_mat;
-
+SA_prec_mat = S_prec_mat - A_prec_mat;
 
 % PM01 FC
-h4 = corr_mat_subplot(A_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 1), "FC PM001 High Arousal", -1, 1);
-h5 = corr_mat_subplot(S_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 2), "FC PM001 Low Arousal", -1, 1);
-h6 = corr_mat_subplot(AS_prec_mat(:, :, 1), atlas_params, subplot(3, 3, 3), "FC PM001 High - Low", -.4, .4);
+h4 = corr_mat_subplot(S_prec_mat(:, :, 1), atlas_params, subplot(1, 3, 1), "FC PM001 Low Arousal", -1, 1);
+h5 = corr_mat_subplot(A_prec_mat(:, :, 1), atlas_params, subplot(1, 3, 2), "FC PM001 High Arousal", -1, 1);
+h6 = corr_mat_subplot(SA_prec_mat(:, :, 1), atlas_params, subplot(1, 3, 3), "FC PM001 Low - High", -.9, .9);
 
 % INET002 FC
-h7 = corr_mat_subplot(A_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 4), "FC INET002 High Arousal", -1, 1);
-h8 = corr_mat_subplot(S_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 5), "FC INET002 Low Arousal", -1, 1);
-h9 = corr_mat_subplot(AS_prec_mat(:, :, 2), atlas_params, subplot(3, 3, 6), "FC INET002 High - Low", -.4, .4);
+h7 = corr_mat_subplot(A_prec_mat(:, :, 2), atlas_params, subplot(1, 3, 1), "FC INET002 High Arousal", -1, 1);
+h8 = corr_mat_subplot(S_prec_mat(:, :, 2), atlas_params, subplot(1, 3, 2), "FC INET002 Low Arousal", -1, 1);
+h9 = corr_mat_subplot(SA_prec_mat(:, :, 2), atlas_params, subplot(1, 3, 3), "FC INET002 Low - High", -.9, .9);
 
 % INET063 FC
-h10 = corr_mat_subplot(A_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 7), "FC INET063 High Arousal", -1, 1);
-h11 = corr_mat_subplot(S_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 8), "FC INET063 Low Arousal", -1, 1);
-h12 = corr_mat_subplot(AS_prec_mat(:, :, 3), atlas_params, subplot(3, 3, 9), "FC INET063 High - Low", -.4, .4);
+h10 = corr_mat_subplot(A_prec_mat(:, :, 3), atlas_params, subplot(1, 3, 1), "FC INET063 High Arousal", -.9, .9);
+h11 = corr_mat_subplot(S_prec_mat(:, :, 3), atlas_params, subplot(1, 3, 2), "FC INET063 Low Arousal", -1, 1);
+h12 = corr_mat_subplot(SA_prec_mat(:, :, 3), atlas_params, subplot(1, 3, 3), "FC INET063 Low - High", -1, 1);
 
 set(gcf, 'Position', [100 100 1400 600]);
 
