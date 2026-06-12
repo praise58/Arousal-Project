@@ -2,26 +2,28 @@
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
 library(dplyr)
 
-all_sample = rbind(inet_awake_runs, inet_sleepy_runs)
-all_sample = unique(all_sample)
+all_sample = read.csv("C:\\Users\\tempu\\Downloads\\research\\labs\\gratton\\Arousal-Project\\splitting_sample\\larger_sample\\larger_sample.csv")
 
 # Helper: ensure subject looks like INET### or keep '1' if that special case is needed
 canon_subject <- function(subj) {
   s <- toupper(as.character(subj))
   s <- gsub("[^A-Z0-9]", "", s)            # remove punctuation
   if (s == "") return(NA_character_)
+  
   # if purely numeric and equals "1", keep "1"
   if (grepl("^[0-9]+$", s)) {
     if (s == "1") return("1")
     return(sprintf("INET%03d", as.integer(s)))
   }
+  
   # if already starts with INET, zero-pad digits after it
   if (grepl("^INET[0-9]+$", s)) {
     num <- sub("^INET", "", s)
     return(sprintf("INET%03d", as.integer(num)))
   }
+  
   # fallback: return cleaned string
-  s
+  
 }
 
 # Main transformation for INET masks
@@ -61,5 +63,6 @@ pm_sample_paths <- pm_sample %>%
 
 
 all_sample_paths = rbind(pm_sample_paths, INET_sample_masks)
+
 # Optionally write to CSV
 # write.csv(out, "files_from_df.csv", row.names = FALSE)
