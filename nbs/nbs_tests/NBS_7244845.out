@@ -1,0 +1,4 @@
+/var/spool/slurmd/job7244845/slurm_script: line 17: THRES: command not found
+Running NBS for threshold: 
+/var/spool/slurmd/job7244845/slurm_script: line 29: $\{main_path\}/arousal/logs/NBS_.log: No such file or directory
+NBS completed for threshold . Log saved to $\{main_path\}/arousal/logs/NBS_.log

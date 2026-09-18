@@ -1,0 +1,130 @@
+SubID,Sex,Age ,Ethnicity ,Race,Education,Language,Notes
+INET001,M,33,Not H/L,White,Master's degree,English,"Pilot subject, data collection may be different "
+INET002,F,32,Not H/L,White,Doctorate ,English,"""Back-up"" participant --- use for No Show scans "
+INET003,M,30,Not H/L,White,Master's degree,English,
+INET004,M,28,Not H/L,White,Bachelor's degree,English,Subject kicked out after MRI 1
+INET005,F,33,Not H/L,White,Master's degree,English/Serbian ,
+INET006,M,30,Not H/L,White,Bachelor's degree,English,
+INET007,F,25,Not H/L,Black,Bachelor's degree,English,not in final sample
+INET008,F,27,Not H/L,White,Bachelor's degree,English,Education input wrong for Phase 2 
+INET009,F,22,Not H/L,White,Some college ,English,Subject kicked out after MRI 1
+INET010,F,30,H/L,Native/White,Bachelor's degree,English/Spanish,
+INET011,F,23,H/L,White,Some college ,English,not in final sample
+INET012,F,22,Not H/L,Asian,Some college ,English,Subject dropped out 
+INET013,F,22,Not H/L,Black,Some college ,English,not in final sample
+INET014,F,24,Not H/L,White,High School,English,not in final sample
+INET015,M,23,Not H/L,White,Some college ,English,not in final sample
+INET016,F,31,Not H/L,White,Master's degree,English,NIH toolbox done in 2 sessions
+INET017,F,23,Not H/L,Asian,Some college ,English,not in final sample
+INET018,F,25,Not H/L,White,Bachelor's degree,English,
+INET019,F,32,Not H/L,Asian,Doctorate ,English/Hindi,
+INET020,F,22,Not H/L,Asian,Some college ,English,not in final sample
+INET021,M,23,Not H/L,Asian,Some college ,English,not in final sample
+INET022,F,26,Not H/L,White,Bachelor's degree,English,not in final sample
+INET023,F,24,Not H/L,Black,Some college ,English,not in final sample
+INET024,F,22,Not H/L,Black/White,Some college ,English,not in final sample
+INET025,F,30,Not H/L,White,Master's degree,English,not in final sample
+INET026,M,30,Not H/L,White,Bachelor's degree,English,
+INET027,M,28,Not H/L,Black/White,Bachelor's degree,English,
+INET028,F,30,Not H/L,Black,Bachelor's degree,English,not in final sample
+INET029,F,19,Not H/L,Black,Some college ,English,
+INET030,M,26,H/L,Native,Bachelor's degree,English,
+INET031,F,19,Not H/L,Asian,High School,English,not in final sample
+INET032,F,20,Not H/L,White,Some college ,English,
+INET033,F,20,H/L,White,Some college ,English,
+INET034,F,27,Not H/L,White,Master's degree,English,
+INET035,M,20,Not H/L,White,Some college ,English,
+INET036,F,22,Not H/L,Black,Some college ,English,
+INET037,F,22,Not H/L,White,Some college ,English,not in final sample
+INET038,F,29,Not H/L,Asian,Master's degree,English,
+INET039,F,24,Not H/L,White,Bachelor's degree,English,
+INET040,F,26,Not H/L,White,Bachelor's degree,English,
+INET041,M,24,Not H/L,Asian,Master's degree,English,
+INET042,F,26,Not H/L,White,Bachelor's degree,English,
+INET043,F,29,Not H/L,Asian,Master's degree,English,
+INET044,F,24,Not H/L,White,Bachelor's degree,English,
+INET045,F,24,H/L,Black,Bachelor's degree,English,
+INET046,F,25,Not H/L,White,Bachelor's degree,English,
+INET047,M,25,Not H/L,Asian,Bachelor's degree,English,
+INET048,F,29,Not H/L,White/Other,Doctorate ,English,
+INET049,F,22,Not H/L,White,Bachelor's degree,English,
+INET050,F,32,Not H/L,White,Bachelor's degree,English,
+INET051,F,23,Not H/L,White,Bachelor's degree,English,
+INET052,F,26,Not H/L,White,Doctorate ,English,
+INET053,M,27,Not H/L,White,Bachelor's degree,English,
+INET054,F,22,Not H/L,White,Bachelor's degree,English,not in final sample
+INET055,F,26,Not H/L,White,Bachelor's degree,English,
+INET056,F,21,Not H/L,Asian,Bachelor's degree,English,
+INET057,F,21,Not H/L,White,Some college ,English,
+INET058,F,24,Not H/L,Asian,Bachelor's degree,English,
+INET059,F,21,Not H/L,Asian,Some college ,English,
+INET060,F,25,Not H/L,White,Bachelor's degree,English,
+INET061,F,25,Not H/L,White,Master's degree,English,
+INET062,F,26,Not H/L,White/Asian,Bachelor's degree,English,
+INET063,M,25,Not H/L,Asian,Bachelor's degree,English,
+INET065,F,27,Not H/L,White,Doctorate ,English,
+INET066,F,24,Not H/L,Black,Bachelor's degree,English,not in final sample
+INET067,M,29,Not H/L,White,Bachelor's degree,English,
+INET068,M,23,Not H/L,White,Bachelor's degree,English,
+INET069,F,21,Not H/L,White,Some college ,English,
+INET070,F,19,Not H/L,White,Some college ,English,
+INET071,M,24,Not H/L,White,Bachelor's degree,English,
+INET072,M,23,Not H/L,Black,Bachelor's degree,English,
+INET073,F,26,Not H/L,White,Bachelor's degree,English,
+INET074,M,31,H/L,White,Master's degree,English,
+INET075,M,26,H/L,White,Master's degree,English,
+INET076,M,20,H/L,White,Some college ,English,FSU STARTS HERE; INET076 not in final sample
+INET077,M,20,Not H/L,White,Some college ,English,
+INET078,M,18,Not H/L,White,Some college ,English,
+INET079,F,,,,,,not in final sample
+INET080,F,19,Not H/L,Asian,Some college ,English/Urdu,
+INET081,M,,,,,,not in final sample
+INET082,F,,,,,,not in final sample
+INET083,F,20,Not H/L,White,Some college ,English,
+INET084,F,19,Not H/L,Black,Some college ,English,
+INET085,F,21,Not H/L,Black/Asian,Some college ,English,
+INET086,M,19,H/L,White,Some college ,English,
+INET087,M,20,H/L,White,Some college ,English,
+INET088,F,20,Not H/L,Black,Some college ,English/Kreyol,
+INET089,F,22,H/L,American Indian,Some college ,English,not in final sample
+INET090,F,21,H/L,White,Some college ,English,not in final sample
+INET091,M,22,Not H/L,White,Some college ,English,
+INET092,M,20,Not H/L,Asian,Some college ,English,not in final sample
+INET093,F,30,Not H/L,White,Master's degree,English,
+INET094,M,24,Not H/L,White,Bachelor's degree,English,
+INET095,M,22,Not H/L,White,Bachelor's degree,English,
+INET096,M,32,H/L,American Indian,Master's degree,English/Spanish,
+INET097,M,34,Not H/L,White,Master's degree,English,
+INET098,M,21,Not H/L,White,Some college ,English,
+INET099,F,30,Not H/L,White,Master's degree,English,
+INET100,F,19,Not H/L,Black,Some college ,English,not in final sample
+INET101,F,24,Not H/L,Black,Bachelor's degree,English/Haitian creole,
+INET102,F,23,Not H/L,White,Some college ,English,not in final sample
+INET103,M,23,Not H/L,White,Bachelor's degree,English,
+INET104,M,20,,Black,,,
+INET105,F,20,,White,,,
+INET106,M,32,,White,,,
+INET107,F,23,,White,,,
+INET108,M,22,,White,,,
+INET109,M,18,,White,,,
+INET110,M,22,,White,,,
+INET112,,,,,,,
+INET113,M,,,,,,not in final sample
+INET114,F,22,,White,,,
+INET115,F,22,,White,,,
+INET116,M,23,,White,,,
+INET120,M,23,,White,,,
+INET123,M,19,,White,,,
+INET131,M,19,,White,,,not in final sample
+INET133,M,21,,White,,,
+INET136,M,18,,Asian,,,
+INET137,M,19,,White,,,
+INET140,M,23,,Asian,,,
+INET141,M,20,,White,,,not in final sample
+INET143,F,19,,White,,,
+INET156,M,22,,Asian,,,
+INET158,M,26,,White,,,
+INET159,M,29,,White,,,
+INET160,M,19,,White,,,
+INET165,M,20,,White,,,
+INET168,M,22,,American Indian or Alaskan Native,,,
