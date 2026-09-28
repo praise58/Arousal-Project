@@ -12,7 +12,7 @@ function make_AdjMat_volume(file)
 % Set the folder to put everything in.
 main_path = '/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/adj_mat';
 file = sprintf('%s/larger_sample/sleepy_FCPreProc.csv', main_path); % files: all sleepy or awake file runs (xlsx)
-data = readtable("nsleepy_FCPreProc.csv", 'ReadVariableNames', false);
+data = readtable("nsleepy_FCPreProc.csv", 'ReadVariableNames', true);
 
 atlas_dir = '/Volumes/illinois-las-psych-gratton/networks-pm/Atlases/Seitzman300'; %Where are the atlases?
 atlas = 'Seitzman300'; %What atlas will be used? 
@@ -28,14 +28,15 @@ addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/member_director
 disp('toolboxes loaded')
 
 %% ROI info
-atlas_params = load("/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/brain_masks/atlas_params_v3.mat");
+atlas_params = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/atlas_params_v2.mat");
 atlas_params = atlas_params.atlas_params;
-roi_data = load('/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/brain_masks/group_mask_v3.mat'); %vox by 1
+roi_data = load('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/group_mask_v3.mat'); %vox by 1
 roi_data = roi_data.group_mask;
 
 %% Loop through data, extract timecourses. Concatenate by chosen runs
 %you need a list of the individual, unique subjects
-fcproc = data.folder{1}; %assuming the preprocess data is all in the same folder
+fcproc_pm = pm_data.folder{1}; %assuming the preprocess data is all in the same folder
+fcproc_inet = inet_data.folder{1};
 
 % I need to do this first for pm, THEN INET.
 [subjects, filesBySubject, ~, fullpathsBySubject] = assemble_filenames_arousal(inet_data, fcproc_inet, 'ReturnDirsOnly', true);
