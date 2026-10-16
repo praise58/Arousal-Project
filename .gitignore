@@ -3,3 +3,5 @@
 *.asv
 adj_mat/larger_sample/corrmats_Seitzman300/
 .DS_Store
+adj_mat/larger_sample/nsleepy_corrmats_Seitzman300
+
