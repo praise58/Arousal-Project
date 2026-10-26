@@ -10,18 +10,10 @@ function make_AdjMat_volume(file)
 %%%%%%%%%%%%%%%%%
 
 % Set the folder to put everything in.
-main_path = '/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/adj mat';
-file = sprintf('%s/awake_FCPreProc.xlsx', main_path); % files: all sleepy or awake file runs (xlsx)
+main_path = '/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/adj_mat';
+file = sprintf('%s/larger_sample/within_nsleepy_FCPreProc.csv', main_path); % files: all sleepy or awake file runs (xlsx)
 data = readtable(file);
 
-% Have to split between folders (pm vs INET)
-pm_data = data(1 : 8, :); % put PM rows into a new table
-data(1:8, :) = []; % remove PM rows from data --> isolate inet rows
-inet_data = data; % re-name as inet_data
-clear data
-
-% I need to get rid of the extra rows.
-inet_data(516:end, :) = [];
 
 atlas_dir = '/projects/illinois/las/psych/cgratton/networks-pm/Atlases'; %Where are the atlases?
 atlas = 'Seitzman300'; %What atlas will be used? 
@@ -36,26 +28,26 @@ addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal
 addpath(genpath('/projects/illinois/las/psych/cgratton/networks-pm/software/hline_vline'));
 addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/toolbox'));
 addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/adj mat'))
+addpath(genpath('/Volumes/illinois-las-psych-gratton/networks-pm/software/bramila/external/niftitools'));
 disp('toolboxes loaded')
 
 %% ROI info
-atlas_params = load("/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/atlas_params_v2.mat");
+atlas_params = load("/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/brain_masks/atlas_params_v3.mat");
 atlas_params = atlas_params.atlas_params;
-roi_data = load('/Volumes/illinois-las-psych-gratton/networks-pm/arousal/Arousal-Project/Arousal-Project/brain masks/group_mask_v3.mat'); %vox by 1
+roi_data = load("/Volumes/illinois-las-psych-gratton/member_directories/praisek2/Arousal-Project/brain_masks/group_mask_v3.mat"); %vox by 1
 roi_data = roi_data.group_mask;
 
 %% Loop through data, extract timecourses. Concatenate by chosen runs
 %you need a list of the individual, unique subjects
-fcproc_pm = pm_data.folder{1}; %assuming the preprocess data is all in the same folder
-fcproc_inet = inet_data.folder{1};
+fcproc = data.folder{1}; %assuming the preprocess data is all in the same folder
 
 % I need to do this first for pm, THEN INET.
-[subjects, filesBySubject, ~, fullpathsBySubject] = assemble_filenames_arousal(inet_data, fcproc_inet, 'ReturnDirsOnly', true);
+[subjects, filesBySubject, ~, fullpathsBySubject] = assemble_filenames_arousal(data, fcproc, 'ReturnDirsOnly', true);
 
-for i = 39:length(fullpathsBySubject)
+for i = 1:length(fullpathsBySubject)
     subject = subjects{i};
     
-    outDir = [main_path '/corrmats_' atlas '/sub-' subject]; % Make the matrices folder
+    outDir = [main_path '/within_nsleepy_corrmats_' atlas '/sub-' subject]; % Make the matrices folder
     if ~exist(outDir) % If it *doesn't* exist, make it.
         mkdir(outDir);
     end
@@ -98,7 +90,17 @@ for i = 39:length(fullpathsBySubject)
     tmask_concat = [];
 
     for k = 1:numel(files) %read each file with the same (sess,task) and concatenate
-        file_data = load_nii_wrapper(sprintf('%s/%s',paths{k}, files{k})); % loads the voxels by their timepoints
+        file_path = sprintf('%s/%s',paths{k}, files{k});
+        
+        if endsWith(file_path,'.gz')
+            gunzip(file_path);                   % creates .nii
+            fname = regexprep(file_path,'\.gz$','');
+        else
+            fname = file_path;
+        end
+        
+        file_data = load_nii_wrapper(file_path); % loads the voxels by their timepoints
+
         file_roi_timeseries{k} = roi_average_timecourse_arousal(file_data,roi_data); % is the average time series for all the voxels for this subject
         roi_timeseries_concat = [roi_timeseries_concat, file_roi_timeseries{k}];
     
