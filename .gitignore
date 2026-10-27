@@ -1,5 +1,7 @@
 .DS_*
+.DS_Store
 ._*
+~$*
 *.asv
 toolbox/.DS_Store
 adj_mat/larger_sample/sleepy_corrmats_Seitzman300/
