@@ -27,3 +27,40 @@ within_matrices_id-rm.mat
 Needed for the NBS.matrices, and :x:x[95-146] contains the sleepy matrices.
 Needed for the NBS.
 Removed identity (main diagonal) for NBS prep.
+
+full_SA_NBS.mat
+This is the result for the NBS with the following parameters:
+T-Test for Sleepy > Awake
+Threshold 4.5
+5000 permutations
+Significance <0.05
+Component size = Extent
+There were two significant networks:
+    Network 1: p-val < 0.001, 5 edges, 6 nodes; 5 VIS nodes *all* in the RH connected to the same SMN-D node in the LH. SO INTERESTING!!
+    Network 2: p-val = 0.010, 2 edges, 3 nodes; 2 SMN-D nodes connected to the same AUD node, all in the RH.
+
+full_AS_NBS.mat
+This is the result for the NBS with the following parameters:
+T-Test for Awake > Sleepy
+Threshold 4.5
+5000 permutations
+Significance <0.05
+Component size = Extent
+There were FOUR!! significant networks:
+	Network 1: p-val = 0.001, 4 edges, 5 nodes
+	Left VAN node connected with 2 LH nodes and 2 RH nodes. 
+		One LH node is inferior temporal lobe to unassigned network. The other LH node is SMN-D.
+		The 2 RH nodes are both SMN-D. 
+		It seems like the VAN node has some hubby properties that activate as humans transition from sleepy to awake.
+		
+	Network 2: p-val = 0.014, 2 edges, 3 nodes
+	LH Reward network is connected to LH SMN-D and midline-but-RH "ParietoMedial" network. *What is that??*
+	Network 3: p-val = 0.002, 3 edges, 4 nodes
+	LH SMN-D connected to 3 RH nodes.
+		2 RH nodes are AUD. 1 RH node is very anterior, part of the CON.
+	Network 4: p-val = 0.002, 3 edges, 4 nodes
+	SALIENCE!! connected with 3 RH nodes all in the DMN.
+In terms of interpretation, I would just say that Awake > Sleepy is just the networks that are active when we are awake... So, not SUPER interesting, and might have a lot of sampling error. We should check what the precision sample looks like.
+ANDDD I forgot to save the .mat file. lol.	
+
+**No significant results were found with Sleepy > Awake for within subjects.** We must use OODA.
