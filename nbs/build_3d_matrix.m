@@ -14,21 +14,21 @@ function group_matrix = build_3d_matrix(condition, location, dataset)
 %% Sleepy subjects
 % Extract corrmat variables and put them in an array. 
 if location == "home"
-    main_root = fullfile("C:/Users", "tempu", "Downloads", "research", "labs", "gratton", "Arousal-Proj");
-    save_folder = fullfile(main_root, "drive-download-20251224T235007Z-1-001", "corrmats_Seitzman300_sleepy");
+    main_root = fullfile("C:/Users", "tempu", "Arousal-Project");
 
 elseif location == "lab"
     main_root = fullfile('/Volumes', 'illinois-las-psych-gratton', ...
         'member_directories', 'praisek2', 'Arousal-Project');
-
-    save_folder = fullfile(main_root, 'nbs', 'larger_sample'); 
+    
 
 end
+
+save_folder = fullfile(main_root, 'nbs', 'larger_sample'); 
 
 %  Where is the data?
 if condition == "sleepy"
     root = fullfile(main_root, 'adj_mat', ...
-            'larger_sample', 'sleepy_corrmats_Seitzman300');
+            'larger_sample', 'within_nsleepy_corrmats_Seitzman300');
 
 elseif condition == "nsleepy"
     root = fullfile(main_root, 'adj_mat', ...
@@ -41,12 +41,12 @@ end
 
 if dataset == "inet"
 
-    file_name = subjects(1).name + "_task-rest_corrmat_Seitzman300.mat";
+    file_end = '_task-rest_corrmat_Seitzman300.mat';
+    file_name = [subjects(1).name file_end];
     first_path = fullfile(root, subjects(1).name, file_name);
     mat_file = load(first_path, 'corrmat');
     mat = mat_file.corrmat;
 
-    file_end = '_task-rest_corrmat_Seitzman300.mat';
 
 elseif dataset == "pm"
     disp("you didnt write any code for this dataset")
@@ -68,10 +68,10 @@ stack = zeros(r, c, n, 'like', mat);
             file_name = [subjects(i).name file_end_pm];
     
         else
-            file_name = [subjects(i).name file_end_inet];
+            file_name = [subjects(i).name file_end];
         end 
     
-        corrmat_path = fullfile(root_sleepy, subjects(i).name, file_name);
+        corrmat_path = fullfile(root, subjects(i).name, file_name);
         mat_file = load(corrmat_path, 'corrmat');
         mat = mat_file.corrmat;
         if ~isequal(size(mat), [r,c])
@@ -81,7 +81,7 @@ stack = zeros(r, c, n, 'like', mat);
     end
     
     % save the variable to the nested folder
-    save_file = fullfile(save_folder, '3d_corrmat_sleepy.mat');
+    save_file = fullfile(save_folder, 'within_3d_corrmat_sleepy.mat');
     save(save_file, 'stack')
     
     %% Awake subjects
@@ -101,10 +101,10 @@ stack = zeros(r, c, n, 'like', mat);
             file_name = [subjects(i).name file_end_pm];
     
         else
-            file_name = [subjects(i).name file_end_inet];
+            file_name = [subjects(i).name file_end];
         end 
     
-        corrmat_path = fullfile(root_awake, subjects(i).name, file_name);
+        corrmat_path = fullfile(root, subjects(i).name, file_name);
         mat_file = load(corrmat_path, 'corrmat');
         mat = mat_file.corrmat;
     
