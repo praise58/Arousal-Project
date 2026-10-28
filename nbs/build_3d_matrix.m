@@ -150,17 +150,19 @@ stack = zeros(r, c, n, 'like', mat);
     
     %% 1.28.2026 PK. I need to make the correct design matrices.
     
-    design_matrix_within = zeros(28, 2);
-    design_matrix_within(1:14, 1) = 1;
-    design_matrix_within(15:28, 2) = 1;
+    r = size(awake, 3);
     
-    save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'within', 'within_design_matrix.mat');
+    design_matrix_within = zeros(r, 2);
+    design_matrix_within(1:17, 1) = 1;
+    design_matrix_within(18:34, 2) = 1;
+    
+    save_file = fullfile(main_root, 'nbs', 'larger_sample', 'within_design_matrix.mat');
     save(save_file, "design_matrix_within")
     
-    design_matrix_between = zeros(40, 2);
-    design_matrix_between(1:20, 1) = 1;
-    design_matrix_between(21:40, 2) = 1;
+    design_matrix_between = zeros(146, 2);
+    design_matrix_between(1:94, 1) = 1;
+    design_matrix_between(95:146, 2) = 1;
     
-    save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'between', 'between_design_matrix.mat');
+    save_file = fullfile(main_root, 'nbs', 'larger_sample', 'full_design_matrix.mat');
     save(save_file, "design_matrix_between")
 end
