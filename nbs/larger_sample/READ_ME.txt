@@ -12,8 +12,18 @@ Will use for precision analyses.
 
 full_matrices.mat
 286 x 286 x 146 matrix, where :x:x[1-94] contains the awake matrices, and :x:x[95-146] contains the sleepy matrices.
-Needed for the NBS.
 
 within_matrices.mat
 286 x 286 x 34 matrix, where first 17 284 x 284 matrices are awake, and 18:34 matrices are sleepy.
 Needed for the NBS.
+
+full_matrices_id-rm.mat
+286 x 286 x 146 matrix, where :x:x[1-94] contains the awake matrices, and :x:x[95-146] contains the sleepy matrices.
+Needed for the NBS.
+Removed identity (main diagonal) for NBS prep.
+
+within_matrices_id-rm.mat
+286 x 286 x 34 matrix, where first 17 284 x 284 matrices are awake, and 18:34 matrices are sleepy.
+Needed for the NBS.matrices, and :x:x[95-146] contains the sleepy matrices.
+Needed for the NBS.
+Removed identity (main diagonal) for NBS prep.
