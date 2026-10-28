@@ -119,16 +119,16 @@ stack = zeros(r, c, n, 'like', mat);
     save_file = fullfile(save_folder, '3d_corrmat_awake.mat');
     save(save_file, 'stack')
     
-    %% 1.7.2026 PK. Need to make a conn matrix with all subject in one variable.
+    %% 1.7.2026 PK. Need to make a conn matrix with all subjects in one variable.
     
-    awake = load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\matrices_awake.mat");
+    awake = load(fullfile(main_root, "\nbs\larger_sample\within_3d_corrmat_nsleepy.mat"));
     awake = awake.stack;
     
-    sleepy = load("C:\Users\tempu\Downloads\research\labs\gratton\Arousal-Project\nbs\matrices_sleepy.mat");
+    sleepy = load(fullfile(main_root, "\nbs\larger_sample\within_3d_corrmat_sleepy.mat"));
     sleepy = sleepy.stack;
     
     matrices_all = cat(3, awake, sleepy);
-    save_file = fullfile('C:', 'Users', 'tempu', 'Downloads', 'research', 'labs', 'gratton', 'Arousal-Project', 'nbs', 'matrices_all.mat');
+    save_file = fullfile(save_folder, 'within_matrices.mat');
     save(save_file, 'matrices_all');
     
     %% 1.23.2026 PK. I need to split the 3d matrix into one for within subject analyses and one for between.
