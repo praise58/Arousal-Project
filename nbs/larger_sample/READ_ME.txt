@@ -9,3 +9,11 @@ within_3d_corrmat_(n)sleepy.mat
 [both files]
 Contain 286 x 286 x 17 matrices of either awake or sleepy subjects that have >=20 minutes of data.
 Will use for precision analyses.
+
+full_matrices.mat
+286 x 286 x 146 matrix, where :x:x[1-94] contains the awake matrices, and :x:x[95-146] contains the sleepy matrices.
+Needed for the NBS.
+
+within_matrices.mat
+286 x 286 x 34 matrix, where first 17 284 x 284 matrices are awake, and 18:34 matrices are sleepy.
+Needed for the NBS.
