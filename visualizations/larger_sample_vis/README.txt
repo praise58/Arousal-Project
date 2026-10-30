@@ -1,0 +1,5 @@
+full_fc_matrices.png
+This visualization shows very little qualitative differences between network connectivity levels. Looking into it, I saw that the maximum value for awake and asleep matrices was around .30. The minimum was around .10 for both of them. These matrices are graphed from range -.8 to .8, reducing the magnitude of effect observable via color saturation. 
+
+full_fc_matrices_v2.png
+This visualization re-plots the same matrices from a scale that  shows an arousal effect more clearly by reducing the scale that colors are plotted on. The scale is from -.4 to .4. Because of the small effect size, the difference matrix is very faint. The max value for the difference matrix is around .05, and the min 0.05. However, these differences were still significant, according to the NBS with p-value < 0.05.
