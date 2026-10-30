@@ -23,7 +23,7 @@ elseif location == "lab"
 
 end
 
-save_folder = fullfile(main_root, 'nbs', 'larger_sample'); 
+save_folder = fullfile(main_root, 'nbs', 'larger_sample_nbs'); 
 
 %  Where is the data?
 if condition == "sleepy"
@@ -121,11 +121,18 @@ stack = zeros(r, c, n, 'like', mat);
     
     %% 1.7.2026 PK. Need to make a conn matrix with all subjects in one variable.
     
-    awake = load(fullfile(main_root, "\nbs\larger_sample\within_3d_corrmat_nsleepy.mat"));
+    % will append pm subj to the within_matrices array
+    load("C:\Users\tempu\Arousal-Project\nbs\self_report_nbs\within\PM001_precision_matrices.mat");
+    pm_A = PM01_matrices(:,:,2);
+    pm_S = PM01_matrices(:,:,1);
+
+    awake = load(fullfile(main_root, "\nbs\larger_sample_nbs\within_3d_corrmat_nsleepy.mat"));
     awake = awake.stack;
-    
-    sleepy = load(fullfile(main_root, "\nbs\larger_sample\within_3d_corrmat_sleepy.mat"));
+    awake = cat(3, awake, pm_A);
+
+    sleepy = load(fullfile(main_root, "\nbs\larger_sample_nbs\within_3d_corrmat_sleepy.mat"));
     sleepy = sleepy.stack;
+    sleepy = cat(3, sleepy, pm_S);
     
     matrices_all = cat(3, awake, sleepy);
     save_file = fullfile(save_folder, 'within_matrices.mat');

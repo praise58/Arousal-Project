@@ -2,7 +2,7 @@
 % Copilot states that including the identity distorts the NBS.
 
 main_root = "C:\Users\tempu\Arousal-Project";
-matrices_all = load(fullfile(main_root, "nbs", "larger_sample", "within_matrices.mat"));
+matrices_all = load(fullfile(main_root, "nbs", "larger_sample_nbs", "within_matrices.mat"));
 matrices_all = matrices_all.matrices_all;
 
 [r, c, n] = size(matrices_all);
@@ -30,7 +30,7 @@ for i = 1:n
     matrices_all_v2(:, :, i) = mat;
 end
 
-save_file = fullfile(main_root, 'nbs', 'larger_sample', 'within_matrices_id-rm.mat');
+save_file = fullfile(main_root, 'nbs', 'larger_sample_nbs', 'within_matrices_id-rm.mat');
 save(save_file, 'matrices_all_v2');
 
 %% Proceed to build_3d_matrix.m to split matrices_all_v2 into between and within
