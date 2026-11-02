@@ -1,0 +1,163 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(bingat)
+
+Attaching package: ‘bingat’
+
+The following objects are masked _by_ ‘.GlobalEnv’:
+
+    array2mat, calcDistance, estGStar, estLogLik, estMLE, estTau,
+    full2lt, getGibbsMixture, getLoglikeMixture, getNumEdges,
+    getNumNodes, glmReg, glrtPvalue, glrtReg, graphNetworkPlot,
+    list2mat, lt2full, rGibbs, testGoF, vec2mat
+
+> library(gplots)
+KernSmooth 2.23 loaded
+Copyright M. P. Wand 1997-2009
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+> library(agricolae)
+> library(HMPTrees)
+Loading required package: ape
+
+Attaching package: ‘ape’
+
+The following object is masked from ‘package:agricolae’:
+
+    consensus
+
+
+Attaching package: ‘HMPTrees’
+
+The following objects are masked _by_ ‘.GlobalEnv’:
+
+    buildTree, checkTreeValidHelp, checkTreeValidity,
+    compareTwoDataSets, createAndPlot, createTrees, displayLegend,
+    formatData, generateTree, getBranchSizes, getMLEandLoglike,
+    getTaxaDepth, mergeDataSets, plotTree, plotTreeDataMDS,
+    removeUnclass, subsetData, transformHMPtoHMPTree,
+    transformHMPTreetoHMP, traverseTree, traverseTreeHelp,
+    trimToTaxaLevel
+
+> library(lme4)
+Loading required package: Matrix
+> setwd(".")
+> source("/data/cn4/haoxin/LSA_Script/Graph Functions.R")
+network: Classes for Relational Data
+Version 1.10.2 created on 2014-06-12.
+copyright (c) 2005, Carter T. Butts, University of California-Irvine
+                    Mark S. Handcock, University of California -- Los Angeles
+                    David R. Hunter, Penn State University
+                    Martina Morris, University of Washington
+                    Skye Bender-deMoll, University of Washington
+ For citation information, type citation("network").
+ Type help("network-package") to get started.
+
+matrixStats v0.10.0 (2014-06-07) successfully loaded. See ?matrixStats for help.
+Loading required package: foreach
+Loading required package: iterators
+Loading required package: parallel
+> source("/data/cn4/haoxin/LSA_Script/Tree Functions.R")
+Loading required package: dirmult
+
+Attaching package: ‘HMP’
+
+The following object is masked from ‘package:dirmult’:
+
+    weirMoM
+
+> source("/data/cn5/caterina/Scripts/OODA/Connectome LSD Functions_NEW.R")
+> group1 <- read.table("/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolutegroup1.txt")
+> group2 <- read.table("/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolutegroup2.txt")
+> gstar1 <- getMLEandLoglike(group1)$mleTree
+> gstar2 <- getMLEandLoglike(group2)$mleTree
+> write.table(gstar1,"/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_gstarG1.txt",sep="\t",col.names=FALSE,row.names=FALSE)
+> write.table(gstar2,"/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_gstarG2.txt",sep="\t",col.names=FALSE,row.names=FALSE)
+> blockCuts <- c(29, 35, 74, 91, 127, 129, 137, 174, 192, 195, 214, 241, 251, 257, 266, 270)
+> labels <- c("MotorHand", "MotorMouth", "CingOperc", "Auditory", "Default", "PERN", "RetroSpl", "Visual", "FrontoPar", "Salience", "VentAttn", "DorsalAttn", "Thal", "BG", "Reward", "MTL", "Cerebellum" )
+> doAbsolute <- TRUE
+> blocksRes <- findBlocks(gstar1, gstar2, blockCuts, labels, doAbsolute,useLSD=TRUE)
+> write.table(blocksRes$blockByEdge,"/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_blockbyEdge.txt",sep="\t",col.names=FALSE,row.names=FALSE)
+> lapply(blocksRes$blockIds, write, "/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_blockIds.txt", append=TRUE, ncolumns=1000)
+[[1]]
+NULL
+
+[[2]]
+NULL
+
+[[3]]
+NULL
+
+[[4]]
+NULL
+
+[[5]]
+NULL
+
+[[6]]
+NULL
+
+[[7]]
+NULL
+
+[[8]]
+NULL
+
+[[9]]
+NULL
+
+[[10]]
+NULL
+
+[[11]]
+NULL
+
+[[12]]
+NULL
+
+[[13]]
+NULL
+
+> lsd <- matrix(c(blocksRes$lsdGroups[[2]], blocksRes$lsdGroups[[4]]), ncol = 2)
+> write.table(lsd,"/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_LSD.txt",sep="\t",col.names=FALSE,row.names=FALSE)
+> location <- "/data/cn5/caterina/Scripts/OODA/LSD_dependence_check_PDdata/LSD_absolute_plots/"
+> plotHeatmap(blocksRes,location)
+null device 
+          1 
+> plotHeatmapBB(blocksRes,FALSE,location)
+null device 
+          1 
+> plotBarchart(blocksRes,location)
+null device 
+          1 
+> plotDensity(blocksRes,location)
+null device 
+          1 
+> 
+> proc.time()
+   user  system elapsed 
+240.032   0.775 241.197 

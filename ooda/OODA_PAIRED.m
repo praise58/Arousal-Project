@@ -1,38 +1,37 @@
-addpath('/projects/illinois/las/psych/cgratton/member_directories/croman/NIfTI_20140122/')
-addpath('/projects/illinois/las/psych/cgratton/member_directories/croman/GrattonLab-General-Repo-master/FCProcess/')
-addpath('/projects/illinois/las/psych/cgratton/member_directories/croman/OODA_CR')
-addpath('/projects/illinois/las/psych/cgratton/Scripts/Scripts_general/FCprocessing/')
+main_root = '/Volumes/illinois-las-psych-gratton/';
 
+addpath(fullfile(main_root, 'member_directories/croman/NIfTI_20140122/'))
+addpath(fullfile(main_root, 'member_directories/croman/GrattonLab-General-Repo-master/FCProcess/'))
+addpath(fullfile(main_root, 'member_directories/croman/OODA_CR'))
+addpath(fullfile(main_root, 'Scripts/Scripts_general/FCprocessing/'))
 
 % directory information
-topDir = '/projects/illinois/las/psych/cgratton/PD/Nifti/derivatives/Datalists/forCR/';
+topDir = fullfile(main_root, 'member_directories/praisek2/Arousal-Project');
 
-outDir = [topDir 'OODA_SSS_BOLD_PERMUTE/'];
+outDir = [topDir 'ooda/OODA_SSS_BOLD_PERMUTE/'];
 
 
 % some variables
-group_names = {'CTRL','PD'};
-thresholds = [0.02:0.01:.30];
+group_names = {'sleepy','nsleepy'};
+thresholds = [0.02:0.01:.30]; % What are these thresholds for?
 % Load subject information file
-data = readtable(fullfile('/projects/illinois/las/psych/cgratton/PD/Nifti/derivatives/Datalists/forCR/NEW_DATA_TABLE/Within_Person_Comparison_OODA.csv'),'Delimiter','\t','ReadVariableNames',false);
-sub_fname = extractBefore(data.Var1,',');
-sub_group = extractAfter(data.Var1,',');
+data = readtable(fullfile(main_root, 'member_directories/praisek2/Arousal-Project/ooda/ooda_within_file_list.csv'),'Delimiter','\t','ReadVariableNames', true);
+sub_fname = extractBefore(data.subject_condition,',');
+sub_group = extractAfter(data.subject_condition,',');
 % Load ROI information file
-atlas_params = atlas_parameters_GrattonLab('Seitzman300','/projects/illinois/las/psych/cgratton/Atlases')
+atlas_params = load(fullfile(main_root, 'member_directories/praisek2/Arousal-Project/brain_masks/atlas_params_v3.mat'));
 
-frames = [3014,2033,1862,3219,3244,2762,1602,1567,2022];
 
 % Load data for each subject
 for s = 1:length(sub_fname)
     %clear sub_data
-    if string(sub_group(s)) == 'CTRL'
-        folderNew = fullfile(topDir,'PD_Data//No_SSS/Alert_PD/Sess_Data/ALL_SESS_CONCAT_2/',['sub-' sub_fname{s}],['sub-' sub_fname{s} '.mat']);
-        sub_data = load(folderNew);
-        sub_data = sub_data.allExtracted;
-        all_data(:,:,s) = paircorr_mod(sub_data(:,1:frames(s))');
+    folderNew = fullfile(topDir,'adj_mat/larger_sample_adj-mat/within_sleepy_corrmats_Seitzman300',['sub-' sub_fname{s}],['sub-' sub_fname{s} '_task-rest_corrmat_Seitzman300.mat']);
+    sub_data = load(folderNew);
+    sub_data = sub_data.allExtracted;
+    all_data(:,:,s) = paircorr_mod(sub_data(:,1:frames(s))');
 
-    elseif string(sub_group(s)) == 'PD'
-        folderNew = fullfile(topDir,'PD_Data/No_SSS/Sleepy_PD/Sess_Data/ALL_SESS_CONCAT_2/',['sub-' sub_fname{s}],['sub-' sub_fname{s} '.mat']);
+    elseif string(sub_group(s)) == 'nsleepy'
+        folderNew = fullfile(topDir,'larger_sample_adj-mat/within_nsleepy_corrmats_Seitzman300',['sub-' sub_fname{s}],['sub-' sub_fname{s} '.mat']);
         sub_data = load(folderNew);
         sub_data = sub_data.allExtracted;
         all_data(:,:,s) = paircorr_mod((sub_data(:,1:frames(s-9)))');
@@ -114,7 +113,7 @@ fig_name = [outDir 'MDS_unweigthed_unthresholded.pdf'];
 function [thresh_mat,threshbin_mat] = thresh_matrix(mat,thresholds)
 % mat is nodes x nodes x subjects
 % group assignment is a vector
-% thresholds ar ethe set of thresholds to output
+% thresholds are the set of thresholds to output
 
 for t = 1:length(thresholds)
     for m = 1:size(mat,3)

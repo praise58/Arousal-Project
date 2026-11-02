@@ -1,13 +1,16 @@
 function OODA_analysis()
+% This script is adapted from Chelsea Roman's PD project (PK).
 % Script to run OODA for PD grant on controls and PD patients
-%
 
-addpath('/projects/illinois/las/psych/cgratton/member_directories/croman/NIfTI_20140122/')
-addpath('/projects/illinois/las/psych/cgratton/member_directories/croman/GrattonLab-General-Repo-master/FCProcess/')
-addpath('/proejects/illinois/las/psych/cgratton/member_directories/croman/OODA_CR')
+main_root = '/Volumes/illinois-las-psych-gratton/';
+
+addpath(fullfile(main_root, 'member_directories/croman/NIfTI_20140122/'))
+addpath(fullfile(main_root, 'member_directories/croman/GrattonLab-General-Repo-master/FCProcess/'))
+addpath(fullfile(main_root, 'member_directories/croman/OODA_CR'))
 
 % directory information
-topDir = '/projects/illinois/las/psych/cgratton/PD/Nifti/derivatives/Datalists/forCR/';
+topDir = fullfile(main_root, 'member_directories/praisek2/Arousal-Project/ooda');
+
 %dataDir = [topDir 'data/'];
 %dataDir = [topDir 'data2/'];
 %dataDir = [topDir 'NEW_DATA_TABLE/'];
