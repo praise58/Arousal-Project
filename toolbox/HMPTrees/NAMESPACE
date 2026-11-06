@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+import("stats")
+import("graphics")
+importFrom("HMP", "Dirichlet.multinomial")
+importFrom("grDevices", "palette", "rainbow")
+importFrom("foreach", "%dopar%")

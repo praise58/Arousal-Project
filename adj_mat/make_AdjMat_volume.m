@@ -18,7 +18,7 @@ data = readtable(file);
 atlas_dir = '/projects/illinois/las/psych/cgratton/networks-pm/Atlases'; %Where are the atlases?
 atlas = 'Seitzman300'; %What atlas will be used? 
 FDtype = 'fFD';
-minutes_included = 5; %Change this according to the amount of data you'd like to include
+minutes_included = 20; %Change this according to the amount of data you'd like to include
 
 % Add paths to toolbox we need
 addpath(genpath('/projects/illinois/las/psych/cgratton/networks-pm/software/GrattonLab-General-Repo'));
