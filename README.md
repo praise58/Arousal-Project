@@ -2,8 +2,8 @@
 
 Analyses generally went in this order:
 
-**Sample Splitting**
-**Brain Masks**
+**Sample Splitting**\n
+**Brain Masks**\n
 **Adjacency Matrices**
 **Global Difference**
 **NBS**
