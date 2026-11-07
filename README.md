@@ -2,18 +2,20 @@
 
 Analyses generally went in this order:
 
-**Sample Splitting**
+<ins>**Sample Splitting**</ins>
 
-**Brain Masks**
+**full_sample.csv**
 
-**Adjacency Matrices**
+<ins>**Brain Masks**</ins>>
 
-**Global Difference**
+<ins>**Adjacency Matrices**</ins>
 
-**NBS**
+<ins>**Global Difference**</ins>
 
-**OODA**
+<ins>**NBS**</ins>
 
-**Visualizations**
+<ins>**OODA**</ins>
+
+<ins>**Visualizations**</ins>
 
 The **Toolbox** folder contains packages for all different folders above.
